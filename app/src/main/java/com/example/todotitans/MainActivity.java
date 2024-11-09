@@ -8,7 +8,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.todotitans.database.databaseReferences;
+
 public class MainActivity extends AppCompatActivity {
+
+    databaseReferences dbReferences = new databaseReferences();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,5 +24,11 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Generate a unique ID for the user
+        String userId = dbReferences.usersRef.push().getKey();
+
+        // Add a new user with the unique userId
+        dbReferences.addUser(userId, "example@example.com", "securepassword123");
     }
 }
