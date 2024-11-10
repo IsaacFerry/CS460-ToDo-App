@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -7,13 +7,97 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!-- Date Selector -->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Task List -->
+    <LinearLayout
+        android:id="@+id/date_selector"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_marginTop="16sp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="October 2024"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="Sun 6" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="Mon 7" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="Tue 8" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_menu"
+            app:tint="@color/colorPrimary" />
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/task_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:paddingTop="15dp"
+        android:layout_below="@id/date_selector"
+        android:layout_above="@id/button_container"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp" />
+
+    <LinearLayout
+        android:id="@+id/button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <ImageButton
+            android:id="@+id/remove_task"
+            android:layout_width="60dp"
+            android:layout_height="60sp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/circular_button"
+            android:contentDescription="@string/remove_task"
+            android:scaleType="centerCrop"
+            android:src="@drawable/remove_task" />
+
+        <ImageButton
+            android:id="@+id/add_task"
+            android:layout_width="60dp"
+            android:layout_height="60sp"
+            android:layout_marginStart="160dp"
+            android:background="@drawable/circular_button"
+            android:contentDescription="@string/add_task"
+            android:scaleType="centerCrop"
+            android:src="@drawable/add_task" />
+
+    </LinearLayout>
+
+</RelativeLayout>

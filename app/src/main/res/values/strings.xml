@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ToDoTitans</string>
+    <string name="remove_task" />
+    <string name="add_task" />
 </resources>
