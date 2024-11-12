@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">ToDoTitans</string>
+    <string name="team_logo"></string>
+    <string name="sign_up">Sign Up</string>
+
+
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="login">Log In</string>
+    <string name="forgot_password">Forgot Password</string>
+
 </resources>

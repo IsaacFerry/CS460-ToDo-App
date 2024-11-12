@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".SignInActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,59 +22,15 @@
             android:contentDescription="@string/team_logo"
             android:src="@drawable/team_logo" />
 
-        <!-- Sign Up Text -->
+        <!-- Sign In Text -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/sign_up"
+            android:text="@string/login"
             android:textColor="@color/primary"
             android:textSize="40sp"
             android:textStyle="bold" />
-
-        <!-- FrameLayout for Profile Picture -->
-        <FrameLayout
-            android:id="@+id/layoutImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
-
-        </FrameLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/inputFirstName"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:background="@drawable/background_input"
-                android:hint="@string/first_name"
-                android:imeOptions="actionNext"
-                android:inputType="text"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:textColor="@color/primary_text"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/inputLastName"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/background_input"
-                android:hint="@string/last_name"
-                android:imeOptions="actionNext"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:textColor="@color/primary_text"
-                android:textSize="18sp" />
-        </LinearLayout>
 
         <!-- Email Input Field -->
         <EditText
@@ -91,6 +47,7 @@
             android:textColor="@color/primary_text"
             android:textSize="18sp" />
 
+        <!-- Password Input Field -->
         <EditText
             android:id="@+id/inputPassword"
             android:layout_width="match_parent"
@@ -98,21 +55,6 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/background_input"
             android:hint="@string/password"
-            android:imeOptions="actionNext"
-            android:inputType="textPassword"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textColor="@color/primary_text"
-            android:textSize="18sp" />
-
-        <!-- Confirm Password Field -->
-        <EditText
-            android:id="@+id/inputConfirmPassword"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/background_input"
-            android:hint="@string/confirm_password"
             android:imeOptions="actionDone"
             android:inputType="textPassword"
             android:paddingStart="16dp"
@@ -120,12 +62,13 @@
             android:textColor="@color/primary_text"
             android:textSize="18sp" />
 
+        <!-- Login Button -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonSignUp"
+            android:id="@+id/buttonLogin"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
-            android:text="@string/sign_up"
+            android:text="@string/login"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -139,10 +82,10 @@
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonLogin"
+                android:id="@+id/buttonSignUp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/login"
+                android:text="@string/sign_up"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
