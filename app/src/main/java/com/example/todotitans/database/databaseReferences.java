@@ -1,46 +1,34 @@
 package com.example.todotitans.database;
+
+import android.util.Log;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class databaseReferences {
 
-    // Initialize Firebase Database
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-
-    // Define references for each table node
-    // creating temporary "tables"
-    public DatabaseReference usersRef = database.getReference("users");
-    DatabaseReference tasksRef = database.getReference("tasks");
-    DatabaseReference categoriesRef = database.getReference("categories");
-    DatabaseReference priorityRef = database.getReference("priority");
-
+    private final FirebaseDatabase database;
+    public final DatabaseReference usersRef;
 
     public databaseReferences() {
-        // Set empty values to create the nodes
-        usersRef.setValue("test");         // Creates "users" node
-        tasksRef.setValue("test");         // Creates "tasks" node
-        categoriesRef.setValue("test");    // Creates "categories" node
-        priorityRef.setValue("test");      // Creates "priority" node
-
+        // Initialize Firebase Database and users node reference
+        database = FirebaseDatabase.getInstance();
+        usersRef = database.getReference("users");
     }
 
-    public void addUser(String userId, String email, String password) {
-        // Create an instance of the User model class
-        User user = new User(userId, email, password);
+    public void addUser(String userId, String email, String password, String firstName, String lastName) {
+        // Create a User object without storing the password for security
+        User user = new User(userId, email, password, firstName, lastName);
 
-        // Add the user to the "users" node with userId as the key
+        // Add the user data to the "users" node with userId as the key
         usersRef.child(userId).setValue(user)
                 .addOnSuccessListener(aVoid -> {
-                    // Successfully added user data
+                    // Optional: Log success
+                    Log.d("DatabaseReferences", "User added successfully to Firebase Database");
                 })
                 .addOnFailureListener(e -> {
-                    // Failed to add user data
+                    // Optional: Log failure
+                    Log.e("DatabaseReferences", "Failed to add user", e);
                 });
     }
-
-
-
-
-
 }

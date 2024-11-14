@@ -29,6 +29,6 @@ public class MainActivity extends AppCompatActivity {
         String userId = dbReferences.usersRef.push().getKey();
 
         // Add a new user with the unique userId for testing
-        dbReferences.addUser(userId, "example@example.com", "securepassword123");
+        dbReferences.addUser("1234", "example@example.com", "securepassword123", "bob", "fisher");
     }
 }
