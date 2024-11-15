@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginHorizontal="10dp"
     app:cardBackgroundColor="@color/white"
-    app:cardElevation="10dp">
+    app:cardElevation="10dp"
+    tools:context=".MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -62,9 +64,10 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                android:id="@+id/showTextDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Date and Time"
+                android:text="Date"
                 android:paddingEnd="20dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
@@ -73,6 +76,19 @@
                 android:layout_weight="1"/>
 
             <TextView
+                android:id="@+id/showTextTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Time"
+                android:paddingEnd="20dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/dateAndTimeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Select"
@@ -90,7 +106,8 @@
                 android:textSize="16sp"
                 android:layout_weight="1"/>
 
-            <TextView
+            <Spinner
+                android:id="@+id/priorityButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Select"
