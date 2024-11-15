@@ -2,7 +2,10 @@
     <string name="app_name">New Task Page</string>
     
     <string name="select">Select Item</string>
-    
+    <string name="settings_menu">settings_menu</string>
+    <string name="remove_task">remove_task</string>
+    <string name="add_task">add_task</string>
+
     <string-array name="priority">
 
         <item>Low</item>
