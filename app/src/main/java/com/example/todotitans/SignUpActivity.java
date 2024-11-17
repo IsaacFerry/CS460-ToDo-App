@@ -1,88 +1,145 @@
 package com.example.todotitans;
 
 
-import com.example.todotitans.database.databaseReferences;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.todotitans.database.databaseReferences;
+import com.example.todotitans.databinding.ActivitySignUpBinding;
+import com.example.todotitans.utilities.Constants;
+import com.example.todotitans.utilities.PreferenceManager;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+
+
 public class SignUpActivity extends AppCompatActivity {
 
-    private EditText inputFirstName, inputLastName, inputEmail, inputPassword, inputConfirmPassword;
-    private Button buttonSignUp;
-    private FirebaseAuth auth;
-    private databaseReferences dbReferences;
+    private ActivitySignUpBinding binding;
+    private PreferenceManager preferenceManager;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);  // Ensure this matches your layout file name
 
-        // Initialize Firebase Auth and Database References
-        auth = FirebaseAuth.getInstance();
-        dbReferences = new databaseReferences();
+        binding = ActivitySignUpBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        // Link UI elements
-        inputFirstName = findViewById(R.id.inputFirstName);
-        inputLastName = findViewById(R.id.inputLastName);
-        inputEmail = findViewById(R.id.inputEmail);
-        inputPassword = findViewById(R.id.inputPassword);
-        inputConfirmPassword = findViewById(R.id.inputConfirmPassword);
-        buttonSignUp = findViewById(R.id.buttonSignUp);
+        preferenceManager = new PreferenceManager(getApplicationContext());
 
-        // Set up the Sign-Up button click listener
-        buttonSignUp.setOnClickListener(v -> registerUser());
+        setListeners();
+
+    }
+
+    private void setListeners() {
+        binding.buttonLogin.setOnClickListener(v -> onBackPressed());
+
+        binding.buttonSignUp.setOnClickListener(v -> {
+            if(isValidSignUpDetails()){
+                registerUser();
+            }
+        });
+
+    }
+
+    private void showToast(String message){
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private void registerUser() {
-        String email = inputEmail.getText().toString().trim();
-        String password = inputPassword.getText().toString().trim();
-        String confirmPassword = inputConfirmPassword.getText().toString().trim();
-        String firstName = inputFirstName.getText().toString().trim();
-        String lastName = inputLastName.getText().toString().trim();
+        // Show loading indicator (if applicable)
+        loading(true);
 
-        // Check for valid input
-        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() ||
-                firstName.isEmpty() || lastName.isEmpty()) {
-            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-            return;
+        // Get instance of Firebase Realtime Database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        // Create a unique key for the user (or you can use user ID)
+        String userId = database.getReference(Constants.KEY_COLLECTION_USERS).push().getKey();
+
+        // Prepare user data as a HashMap
+        HashMap<String, String> user = new HashMap<>();
+        user.put(Constants.KEY_FIRST_NAME, binding.inputFirstName.getText().toString());
+        user.put(Constants.KEY_LAST_NAME, binding.inputLastName.getText().toString());
+        user.put(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
+        user.put(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
+
+        // Write user data to Realtime Database
+        if (userId != null) {
+            database.getReference(Constants.KEY_COLLECTION_USERS)
+                    .child(userId)
+                    .setValue(user)
+                    .addOnSuccessListener(unused -> {
+                        // Hide loading indicator
+                        loading(false);
+
+                        // Save user details in shared preferences
+                        preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
+                        preferenceManager.putString(Constants.KEY_FIRST_NAME, binding.inputFirstName.getText().toString());
+                        preferenceManager.putString(Constants.KEY_LAST_NAME, binding.inputLastName.getText().toString());
+
+                        // Navigate to the next activity
+                        Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    })
+                    .addOnFailureListener(exception -> {
+                        // Hide loading indicator
+                        loading(false);
+
+                        // Show error message
+                        showToast(exception.getMessage());
+                    });
+        } else {
+            // Handle the case where userId is null
+            showToast("Failed to generate user ID. Please try again.");
         }
-
-        if (!password.equals(confirmPassword)) {
-            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Create a new user with Firebase Authentication
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser firebaseUser = auth.getCurrentUser();
-                        if (firebaseUser != null) {
-                            String userId = firebaseUser.getUid();
-
-                            // Add the user to Realtime Database (omitting password for security)
-                            dbReferences.addUser(userId, email, password, firstName, lastName);
-
-                            Toast.makeText(this, "Registration Successful", Toast.LENGTH_SHORT).show();
-
-                            // Redirect to the next activity or login screen
-                            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    } else {
-                        // Registration failed
-                        Toast.makeText(this, "Registration Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
+
+
+    private Boolean isValidSignUpDetails(){
+        if(binding.inputFirstName.getText().toString().trim().isEmpty()){
+            showToast("Please enter your first name");
+            return false;
+        } else if (binding.inputLastName.getText().toString().trim().isEmpty()){
+            showToast("Please enter your last name");
+            return false;
+        } else if (binding.inputEmail.getText().toString().trim().isEmpty()){
+            showToast("Please enter your email");
+            return false;
+        } else if (binding.inputPassword.getText().toString().trim().isEmpty()){
+            showToast("Please enter a password");
+            return false;
+        } else if (binding.inputConfirmPassword.getText().toString().trim().isEmpty()){
+            showToast("Please confirm your password");
+            return false;
+        } else if (!binding.inputPassword.getText().toString().equals(binding.inputConfirmPassword.getText().toString())){
+            showToast("Passwords do not match");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private void loading (Boolean isLoading){
+        if(isLoading){
+            binding.buttonLogin.setVisibility(View.INVISIBLE);
+            binding.progressBar.setVisibility(View.VISIBLE);
+        } else {
+            binding.buttonLogin.setVisibility(View.VISIBLE);
+            binding.progressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
 }
