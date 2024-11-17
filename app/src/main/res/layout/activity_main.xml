@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -10,8 +9,8 @@
 
     <ImageButton
         android:id="@+id/menu_button"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="16dp"
@@ -21,118 +20,77 @@
         android:background="@color/white"
         android:src="@drawable/ic_menu" />
 
-    <TextView
-        android:id="@+id/month_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="October 2024"
-        android:textSize="28sp"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true" />
-
     <LinearLayout
-        android:id="@+id/days_of_week"
+        android:id="@+id/date_selector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/month_title"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="12dp">
+        android:orientation="vertical"
+        android:layout_marginTop="16dp"
+        android:padding="20dp"
+        android:gravity="center">
 
         <TextView
+            android:id="@+id/current_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sun"
-            android:gravity="center"
-            android:layout_marginEnd="22dp" />
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- Days of the Week Timeline -->
+        <LinearLayout
+            android:id="@+id/days_timeline"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mon"
-            android:gravity="center"
-            android:layout_marginEnd="22dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tue"
-            android:gravity="center"
-            android:layout_marginEnd="22dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Wed"
-            android:gravity="center"
-            android:layout_marginEnd="22dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Thu"
-            android:gravity="center"
-            android:layout_marginEnd="22dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Fri"
-            android:gravity="center"
-            android:layout_marginEnd="22dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sat"
-            android:gravity="center" />
-
+            android:orientation="horizontal"
+            android:gravity="center">
+        </LinearLayout>
     </LinearLayout>
 
+    <!-- Task List -->
     <ListView
         android:id="@+id/task_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
-        android:paddingTop="5dp"
-        android:layout_below="@id/days_of_week"
+        android:paddingTop="15dp"
+        android:layout_below="@id/date_selector"
         android:layout_above="@id/button_container"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp" />
 
+    <!-- Button Container -->
     <LinearLayout
         android:id="@+id/button_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="0dp"
-        android:gravity="center"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:gravity="center">
 
+        <!-- Remove Task Button -->
         <ImageButton
-            android:id="@+id/remove_task"
+            android:id="@+id/remove_task_button"
             android:layout_width="60dp"
-            android:layout_height="60sp"
+            android:layout_height="60dp"
             android:layout_marginEnd="32dp"
             android:background="@drawable/circular_button"
+            android:src="@drawable/remove_task"
             android:contentDescription="@string/remove_task"
-            android:scaleType="centerCrop"
-            android:src="@drawable/remove_task" />
+            android:scaleType="centerInside" />
 
+        <!-- Add Task Button -->
         <ImageButton
-            android:id="@+id/add_task"
+            android:id="@+id/add_task_button"
             android:layout_width="60dp"
-            android:layout_height="60sp"
-            android:layout_marginStart="160dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="150dp"
             android:background="@drawable/circular_button"
+            android:src="@drawable/add_task"
             android:contentDescription="@string/add_task"
-            android:scaleType="centerCrop"
-            android:src="@drawable/add_task" />
-
+            android:scaleType="centerInside" />
     </LinearLayout>
 
 </RelativeLayout>
