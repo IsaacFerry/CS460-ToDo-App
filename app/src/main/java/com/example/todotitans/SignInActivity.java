@@ -48,6 +48,7 @@ public class SignInActivity extends Activity {
         // Sign in the user with Firebase Authentication
         authentication.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
+                    loading(false);
                     if (task.isSuccessful()) {
                         FirebaseUser user = authentication.getCurrentUser();
                         if (user != null) {
