@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".MainActivity">
+
+    <ImageButton
+        android:id="@+id/menu_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@string/settings_menu"
+        android:scaleType="centerCrop"
+        android:background="@color/white"
+        android:src="@drawable/ic_menu" />
+
+    <TextView
+        android:id="@+id/month_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="October 2024"
+        android:textSize="28sp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true" />
+
+    <LinearLayout
+        android:id="@+id/days_of_week"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/month_title"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sun"
+            android:gravity="center"
+            android:layout_marginEnd="22dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mon"
+            android:gravity="center"
+            android:layout_marginEnd="22dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tue"
+            android:gravity="center"
+            android:layout_marginEnd="22dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wed"
+            android:gravity="center"
+            android:layout_marginEnd="22dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thu"
+            android:gravity="center"
+            android:layout_marginEnd="22dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fri"
+            android:gravity="center"
+            android:layout_marginEnd="22dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sat"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/task_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:paddingTop="5dp"
+        android:layout_below="@id/days_of_week"
+        android:layout_above="@id/button_container"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp" />
+
+    <LinearLayout
+        android:id="@+id/button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <ImageButton
+            android:id="@+id/remove_task"
+            android:layout_width="60dp"
+            android:layout_height="60sp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/circular_button"
+            android:contentDescription="@string/remove_task"
+            android:scaleType="centerCrop"
+            android:src="@drawable/remove_task" />
+
+        <ImageButton
+            android:id="@+id/add_task"
+            android:layout_width="60dp"
+            android:layout_height="60sp"
+            android:layout_marginStart="160dp"
+            android:background="@drawable/circular_button"
+            android:contentDescription="@string/add_task"
+            android:scaleType="centerCrop"
+            android:src="@drawable/add_task" />
+
+    </LinearLayout>
+
+</RelativeLayout>
