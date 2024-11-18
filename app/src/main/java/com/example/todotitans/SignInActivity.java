@@ -9,30 +9,35 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class SignInActivity extends Activity {
+public class SignInActivity extends AppCompatActivity {
     private EditText inputEmail, inputPassword;
     private Button buttonLogin;
     private FirebaseAuth authentication;
     private ProgressBar progressBar;
 
     @Override
-    protected  void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        authentication = FirebaseAuth.getInstance();
-
-        // provided a link for UI elements
-        inputEmail = findViewById(R.id.inputEmail);
-        inputPassword = findViewById(R.id.inputPassword);
-        buttonLogin = findViewById(R.id.buttonLogin);
-        progressBar = findViewById(R.id.progressBar);
-
-        buttonLogin.setOnClickListener(v -> signInUser());
+        MaterialButton signUpButton = findViewById(R.id.buttonSignUp);
+        signUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navigate to SignUpActivity
+                Intent intent = new Intent(SignInActivity.this, SignUpActivity.class);
+                startActivity(intent);
+            }
+        });
     }
+
+
 
     private void signInUser() {
         loading(true);
