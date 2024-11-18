@@ -25,6 +25,16 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        authentication = FirebaseAuth.getInstance();
+
+        // provided a link for UI elements
+        inputEmail = findViewById(R.id.inputEmail);
+        inputPassword = findViewById(R.id.inputPassword);
+        buttonLogin = findViewById(R.id.buttonLogin);
+        progressBar = findViewById(R.id.progressBar);
+
+        buttonLogin.setOnClickListener(v -> signInUser());
+
 
         MaterialButton signUpButton = findViewById(R.id.buttonSignUp);
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -35,6 +45,7 @@ public class SignInActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
     }
 
 
