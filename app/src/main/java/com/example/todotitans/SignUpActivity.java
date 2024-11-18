@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.todotitans.databinding.ActivitySignUpBinding;
 import com.example.todotitans.utilities.Constants;
 import com.example.todotitans.utilities.PreferenceManager;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 
@@ -77,52 +79,52 @@ public class SignUpActivity extends AppCompatActivity {
      * Also saves user preferences and navigates to the next activity upon successful registration.
      */
     private void registerUser() {
-        // Show loading indicator (if applicable)
         loading(true);
 
-        // Get instance of Firebase Realtime Database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        String email = binding.inputEmail.getText().toString();
+        String password = binding.inputPassword.getText().toString();
 
-        // Create a unique key for the user (or you can use user ID)
-        String userId = database.getReference(Constants.KEY_COLLECTION_USERS).push().getKey();
+        // Firebase Authentication instance
+        FirebaseAuth auth = FirebaseAuth.getInstance();
 
-        // Prepare user data as a HashMap
-        HashMap<String, String> user = new HashMap<>();
-        user.put(Constants.KEY_FIRST_NAME, binding.inputFirstName.getText().toString());
-        user.put(Constants.KEY_LAST_NAME, binding.inputLastName.getText().toString());
-        user.put(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
-        user.put(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
+        // Create user in Firebase Authentication
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    loading(false);
+                    if (task.isSuccessful()) {
+                        // Successfully created user
+                        FirebaseUser firebaseUser = auth.getCurrentUser();
+                        if (firebaseUser != null) {
+                            String userId = firebaseUser.getUid();
 
-        // Write user data to Realtime Database
-        if (userId != null) {
-            database.getReference(Constants.KEY_COLLECTION_USERS)
-                    .child(userId)
-                    .setValue(user)
-                    .addOnSuccessListener(unused -> {
-                        // Hide loading indicator
-                        loading(false);
+                            // Save additional user data in Realtime Database
+                            HashMap<String, String> user = new HashMap<>();
+                            user.put(Constants.KEY_FIRST_NAME, binding.inputFirstName.getText().toString());
+                            user.put(Constants.KEY_LAST_NAME, binding.inputLastName.getText().toString());
+                            user.put(Constants.KEY_EMAIL, email);
+                            user.put(Constants.KEY_USER_ID, userId);
 
-                        // Save user details in shared preferences
-                        preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                        preferenceManager.putString(Constants.KEY_FIRST_NAME, binding.inputFirstName.getText().toString());
-                        preferenceManager.putString(Constants.KEY_LAST_NAME, binding.inputLastName.getText().toString());
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            database.getReference(Constants.KEY_COLLECTION_USERS)
+                                    .child(userId)
+                                    .setValue(user)
+                                    .addOnSuccessListener(unused -> {
+                                        preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
+                                        preferenceManager.putString(Constants.KEY_FIRST_NAME, binding.inputFirstName.getText().toString());
+                                        preferenceManager.putString(Constants.KEY_LAST_NAME, binding.inputLastName.getText().toString());
 
-                        // Navigate to the next activity
-                        Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                    })
-                    .addOnFailureListener(exception -> {
-                        // Hide loading indicator
-                        loading(false);
-
+                                        // Navigate to the next activity
+                                        Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(intent);
+                                    })
+                                    .addOnFailureListener(e -> showToast("Failed to save user: " + e.getMessage()));
+                        }
+                    } else {
                         // Show error message
-                        showToast(exception.getMessage());
-                    });
-        } else {
-            // Handle the case where userId is null
-            showToast("Failed to generate user ID. Please try again.");
-        }
+                        showToast("Registration Failed: " + task.getException().getMessage());
+                    }
+                });
     }
 
 
