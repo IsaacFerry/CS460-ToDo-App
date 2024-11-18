@@ -15,4 +15,18 @@
     <string name="remove_task" />
     <string name="add_task" />
     <string name="settings_menu">Settings Menu</string>
+
+
+    <string name="select">Select Item</string>
+
+
+    <string-array name="priority">
+
+        <item>Low</item>
+
+        <item>Medium</item>
+
+        <item>High</item>
+
+    </string-array>
 </resources>
