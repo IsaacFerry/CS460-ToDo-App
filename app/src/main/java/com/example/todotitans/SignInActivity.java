@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -14,6 +16,7 @@ public class SignInActivity extends Activity {
     private EditText inputEmail, inputPassword;
     private Button buttonLogin;
     private FirebaseAuth authentication;
+    private ProgressBar progressBar;
 
     @Override
     protected  void onCreate(Bundle savedInstanceState) {
@@ -26,11 +29,13 @@ public class SignInActivity extends Activity {
         inputEmail = findViewById(R.id.inputEmail);
         inputPassword = findViewById(R.id.inputPassword);
         buttonLogin = findViewById(R.id.buttonLogin);
+        progressBar = findViewById(R.id.progressBar);
 
         buttonLogin.setOnClickListener(v -> signInUser());
     }
 
     private void signInUser() {
+        loading(true);
         String email = inputEmail.getText().toString().trim();
         String password = inputPassword.getText().toString().trim();
 
@@ -51,13 +56,23 @@ public class SignInActivity extends Activity {
                             startActivity(intent);
                             finish();
                         }
-                    } else{
+                    } else {
                         // login failure
                         Toast.makeText(this, "Login Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
 
+    }
+
+    private void loading(Boolean isLoading) {
+        if (isLoading) {
+            buttonLogin.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            buttonLogin.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
 }
