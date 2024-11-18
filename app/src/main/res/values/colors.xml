@@ -7,4 +7,6 @@
     <color name="secondary_text">#757575</color>
     <color name="input_background">#ECECEC</color>
 
+    <color name="colorBackground">#B8B1B1</color>
+    <color name="colorPrimary">#000000</color>
 </resources>
