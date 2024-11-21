@@ -26,6 +26,15 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         authentication = FirebaseAuth.getInstance();
+        /*
+        FirebaseUser user = authentication.getCurrentUser();
+        if (user != null) {
+            // If user is already signed in, navigate to HomeActivity
+            Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+            startActivity(intent);
+            return; // Prevent further execution
+        }
+        */
 
         // provided a link for UI elements
         inputEmail = findViewById(R.id.inputEmail);
