@@ -22,7 +22,7 @@ public class SignInActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     @Override
-    protected  void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         authentication = FirebaseAuth.getInstance();
@@ -38,6 +38,7 @@ public class SignInActivity extends AppCompatActivity {
 
         MaterialButton signUpButton = findViewById(R.id.buttonSignUp);
         MaterialButton forgotPasswordButton = findViewById(R.id.buttonForgotPassword);
+
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
