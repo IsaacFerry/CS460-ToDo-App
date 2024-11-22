@@ -34,7 +34,6 @@ public class SignInActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         buttonLogin.setOnClickListener(v -> signInUser());
-<<<<<<< HEAD
 
 
         MaterialButton signUpButton = findViewById(R.id.buttonSignUp);
@@ -46,10 +45,6 @@ public class SignInActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-=======
-        
->>>>>>> 86928ca11e262d9b9a6c91dfd31ca14c33acc006
-
     }
 
 

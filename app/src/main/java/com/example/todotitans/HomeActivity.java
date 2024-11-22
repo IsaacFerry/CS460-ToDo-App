@@ -1,5 +1,6 @@
 package com.example.todotitans;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -53,7 +54,9 @@ public class HomeActivity extends AppCompatActivity {
         addTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addTask("New Task");
+                Intent intent = new Intent(HomeActivity.this, CadenActivity.class);
+
+                startActivity(intent);
             }
         });
 
