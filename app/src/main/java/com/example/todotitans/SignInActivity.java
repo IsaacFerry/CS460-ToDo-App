@@ -57,6 +57,7 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
+
         forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,6 +65,7 @@ public class SignInActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
 
     }
 

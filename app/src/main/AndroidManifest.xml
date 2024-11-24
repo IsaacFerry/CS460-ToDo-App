@@ -32,8 +32,12 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"/>
+
         <activity
             android:name=".ForgotPasswordActivity"
             android:exported="true" />
+
+        <activity android:name=".CadenActivity"/>
+
     </application>
 </manifest>

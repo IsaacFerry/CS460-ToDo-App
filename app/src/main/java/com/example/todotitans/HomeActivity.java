@@ -60,7 +60,9 @@ public class HomeActivity extends AppCompatActivity {
         addTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addTask("New Task");
+                Intent intent = new Intent(HomeActivity.this, CadenActivity.class);
+
+                startActivity(intent);
             }
         });
 
