@@ -30,6 +30,13 @@
         android:padding="20dp"
         android:gravity="center">
 
+        <Button
+            android:id="@+id/logout_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Log Out" />
+
         <TextView
             android:id="@+id/current_date"
             android:layout_width="wrap_content"
@@ -45,6 +52,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center">
+
+            <!-- Temporary Log Out Button -->
+
         </LinearLayout>
     </LinearLayout>
 

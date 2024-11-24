@@ -1,14 +1,19 @@
 package com.example.todotitans;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,6 +30,7 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton menuButton;
     private ArrayAdapter<String> taskAdapter;
     private ArrayList<String> tasks;
+    private Button logoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +43,7 @@ public class HomeActivity extends AppCompatActivity {
         addTaskButton = findViewById(R.id.add_task_button);
         removeTaskButton = findViewById(R.id.remove_task_button);
         menuButton = findViewById(R.id.menu_button);
+        logoutButton = findViewById(R.id.logout_button);
 
         // Initialize task list and adapter
         tasks = new ArrayList<>();
@@ -64,7 +71,27 @@ public class HomeActivity extends AppCompatActivity {
                 removeTask();
             }
         });
+
+
+        // Set up the Log Out button functionality
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Log out the user
+                FirebaseAuth.getInstance().signOut();
+
+                // Navigate back to the sign-in page
+                Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish(); // Close HomeActivity
+            }
+        });
+
     }
+
+
+
 
     private void setCurrentDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
