@@ -4,19 +4,23 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.todotitans.database.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -24,31 +28,35 @@ public class HomeActivity extends AppCompatActivity {
 
     private TextView currentDateTextView;
     private LinearLayout daysTimeline;
-    private ListView taskList;
-    private ImageButton addTaskButton;
-    private ImageButton removeTaskButton;
-    private ImageButton menuButton;
-    private ArrayAdapter<String> taskAdapter;
-    private ArrayList<String> tasks;
-    private Button logoutButton;
+    private RecyclerView taskRecyclerView;
+    private ImageButton addTaskButton, removeTaskButton;
+
+    private FirebaseAuth firebaseAuth;
+    private DatabaseReference databaseReference;
+    private TaskAdapter taskAdapter;
+    private ArrayList<Task> taskList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        // Initialize Firebase Auth and Database Reference
+        firebaseAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference("Tasks");
+
+        // Initialize views
         currentDateTextView = findViewById(R.id.current_date);
         daysTimeline = findViewById(R.id.days_timeline);
-        taskList = findViewById(R.id.task_list);
+        taskRecyclerView = findViewById(R.id.task_list);
         addTaskButton = findViewById(R.id.add_task_button);
         removeTaskButton = findViewById(R.id.remove_task_button);
-        menuButton = findViewById(R.id.menu_button);
-        logoutButton = findViewById(R.id.logout_button);
 
-        // Initialize task list and adapter
-        tasks = new ArrayList<>();
-        taskAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, tasks);
-        taskList.setAdapter(taskAdapter);
+        // Set up RecyclerView
+        taskList = new ArrayList<>();
+        taskAdapter = new TaskAdapter(this, taskList);
+        taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        taskRecyclerView.setAdapter(taskAdapter);
 
         // Set current date
         setCurrentDate();
@@ -56,44 +64,18 @@ public class HomeActivity extends AppCompatActivity {
         // Populate days of the week
         populateDaysOfWeek();
 
-        // Add Task Button functionality
-        addTaskButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, CadenActivity.class);
+        // Fetch tasks for the current user
+        fetchUserTasks();
 
-                startActivity(intent);
-            }
+        // Add Task Button functionality
+        addTaskButton.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, CadenActivity.class);
+            startActivity(intent);
         });
 
         // Remove Task Button functionality
-        removeTaskButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeTask();
-            }
-        });
-
-
-        // Set up the Log Out button functionality
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Log out the user
-                FirebaseAuth.getInstance().signOut();
-
-                // Navigate back to the sign-in page
-                Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish(); // Close HomeActivity
-            }
-        });
-
+        removeTaskButton.setOnClickListener(v -> deleteSelectedTasks());
     }
-
-
-
 
     private void setCurrentDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
@@ -104,17 +86,11 @@ public class HomeActivity extends AppCompatActivity {
     private void populateDaysOfWeek() {
         SimpleDateFormat sdfDay = new SimpleDateFormat("EEE", Locale.getDefault());
         SimpleDateFormat sdfDate = new SimpleDateFormat("d", Locale.getDefault());
-        Calendar calendar = Calendar.getInstance();
-
         daysTimeline.removeAllViews();
 
-        // Display the current week with the current day on the left
-        for (int i = 0; i < 5; i++) {
-            int dayOffset = (i - calendar.get(Calendar.DAY_OF_WEEK) + 1);
-            calendar.add(Calendar.DAY_OF_MONTH, dayOffset);
-
+        for (int i = 0; i < 7; i++) {
             TextView dayView = new TextView(this);
-            dayView.setText(String.format("%s %s", sdfDay.format(calendar.getTime()), sdfDate.format(calendar.getTime())));
+            dayView.setText(String.format("%s %s", sdfDay.format(new Date()), sdfDate.format(new Date())));
             dayView.setTextSize(18);
             dayView.setPadding(18, 8, 18, 8);
 
@@ -123,21 +99,45 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             daysTimeline.addView(dayView);
-
-            // Reset the calendar for next iteration
-            calendar.add(Calendar.DAY_OF_MONTH, -dayOffset);
         }
     }
+    private void fetchUserTasks() {
+        String userId = firebaseAuth.getCurrentUser().getUid();
 
-    private void addTask(String task) {
-        tasks.add(task);
-        taskAdapter.notifyDataSetChanged();
+        databaseReference.orderByChild("userId").equalTo(userId)
+                .addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull com.google.firebase.database.DataSnapshot snapshot) {
+                        taskList.clear();
+                        for (com.google.firebase.database.DataSnapshot taskSnapshot : snapshot.getChildren()) {
+                            Task task = taskSnapshot.getValue(Task.class);
+                            if (task != null) {
+                                taskList.add(task);
+                            }
+                        }
+                        taskAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull com.google.firebase.database.DatabaseError error) {
+                        Toast.makeText(HomeActivity.this, "Failed to load tasks.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
-    private void removeTask() {
-        if (!tasks.isEmpty()) {
-            tasks.remove(tasks.size() - 1);
-            taskAdapter.notifyDataSetChanged();
+    private void deleteSelectedTasks() {
+        ArrayList<Task> selectedTasks = taskAdapter.getSelectedTasks();
+
+        if (selectedTasks.isEmpty()) {
+            Toast.makeText(this, "No tasks selected for deletion", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        for (Task task : selectedTasks) {
+            databaseReference.child(task.getTaskId()).removeValue();
+        }
+
+        taskAdapter.removeTasks(selectedTasks);
+        Toast.makeText(this, "Selected tasks deleted", Toast.LENGTH_SHORT).show();
     }
 }
