@@ -3,107 +3,139 @@ package com.example.todotitans;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CadenActivity extends AppCompatActivity {
 
     private TextView textDate;
-
     private TextView textTime;
-
     private Button dateAndTimeButton;
+    private Button saveTaskButton;
+    private Spinner spinnerPriority;
+    private TextInputEditText editTaskTitle;
+    private TextInputEditText editTaskDescription;
 
-    private Spinner spinner;
+    private DatabaseReference databaseReference;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.new_task);
 
-        spinner = findViewById(R.id.priorityButton);
+        // Firebase Database reference
+        databaseReference = FirebaseDatabase.getInstance().getReference("Tasks");
+        firebaseAuth = FirebaseAuth.getInstance();
 
-        /**
-         * Uses an ArrayAdapter for the Priority Selector
-         */
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.priority, android.R.layout.simple_spinner_item);
-
-        /**
-         * Allows for the user to see the options inside the Priority Selector
-         */
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinner.setAdapter(adapter);
-
+        // Initialize views
+        spinnerPriority = findViewById(R.id.priorityButton);
         textDate = findViewById(R.id.showTextDate);
-
         textTime = findViewById(R.id.showTextTime);
-
         dateAndTimeButton = findViewById(R.id.dateAndTimeButton);
+        saveTaskButton = findViewById(R.id.saveTaskButton);
+        editTaskTitle = findViewById(R.id.editTaskTitle);
+        editTaskDescription = findViewById(R.id.editTaskNotes);
 
+        // Setup Priority Spinner
+        ArrayAdapter<CharSequence> priorityAdapter = ArrayAdapter.createFromResource(this,
+                R.array.priority, android.R.layout.simple_spinner_item);
+        priorityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPriority.setAdapter(priorityAdapter);
+
+        // Set Date and Time Picker
         dateAndTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 openDialog();
-
             }
         });
 
-        //ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-        //Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-        //v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-        //return insets;
-        //});
+        // Save Task Button Listener
+        saveTaskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveTaskToDatabase();
+            }
+        });
     }
 
-    /**
-     * Inputs the year, month, and day that the user selects. Also includes how to change the time as well
-     */
     private void openDialog() {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, (timePicker, hourOfDay, minute) -> {
+            textTime.setText(String.format("%02d:%02d", hourOfDay, minute));
+        }, 15, 0, true);
 
-        /**
-         * Method that sets the time, allowing for the hours and minutes to be selected
-         */
-        TimePickerDialog dialog1 = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-
-                textTime.setText(String.valueOf(hourOfDay) + ":" + String.valueOf(minute));
-
-            }
-        }, 15, 00, true);
-
-        /**
-         * Method that sets the date, allowing for the year, month, and day to be selected
-         */
-        DatePickerDialog dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-
-                textDate.setText(String.valueOf(year) + "." + String.valueOf(month+1) + "." + String.valueOf(dayOfMonth));
-
-            }
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (datePicker, year, month, dayOfMonth) -> {
+            textDate.setText(String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth));
         }, 2024, 0, 15);
 
-        /**
-         * Gives the dialog for the date an initial date, and on the onDateSet method, we get the date the user selected
-         * and show it in a text view
-         */
-        dialog.show();
-        dialog1.show();
-
+        datePickerDialog.show();
+        timePickerDialog.show();
     }
 
+    private void saveTaskToDatabase() {
+        // Get input values
+        String taskTitle = editTaskTitle.getText().toString().trim();
+        String taskDescription = editTaskDescription.getText().toString().trim();
+        String taskDate = textDate.getText().toString().trim();
+        String taskTime = textTime.getText().toString().trim();
+        String priorityLevel = spinnerPriority.getSelectedItem().toString();
+
+        // Validate inputs
+        if (TextUtils.isEmpty(taskTitle)) {
+            editTaskTitle.setError("Task title is required!");
+            return;
+        }
+        if (TextUtils.isEmpty(taskDate)) {
+            Toast.makeText(this, "Please select a due date", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(taskTime)) {
+            Toast.makeText(this, "Please select a time", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Get the current user ID from Firebase Authentication
+        String userId = firebaseAuth.getCurrentUser().getUid();
+        String status = "Pending"; // Default status
+
+        // Create a unique ID for the task
+        String taskId = databaseReference.push().getKey();
+
+        // Create a task map
+        Map<String, Object> task = new HashMap<>();
+        task.put("taskId", taskId);
+        task.put("userId", userId);
+        task.put("priorityLevel", priorityLevel); // Priority as Low, Medium, or High
+        task.put("title", taskTitle);
+        task.put("description", taskDescription);
+        task.put("dueDate", taskDate + " " + taskTime);
+        task.put("status", status);
+
+        // Save task to Firebase
+        databaseReference.child(taskId).setValue(task)
+                .addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        Toast.makeText(CadenActivity.this, "Task saved successfully", Toast.LENGTH_SHORT).show();
+                        finish(); // Close activity
+                    } else {
+                        Toast.makeText(CadenActivity.this, "Failed to save task. Try again!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 }

@@ -151,19 +151,6 @@
                 app:cornerRadius="8sp" />
 
 
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonForgotPassword"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="1dp"
-                android:text="@string/forgot_password"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:cornerRadius="8sp" />
-
         </LinearLayout>
 
         <ProgressBar
