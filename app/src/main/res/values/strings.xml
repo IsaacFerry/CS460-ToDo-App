@@ -18,6 +18,7 @@
 
 
     <string name="select">Select Item</string>
+    <string name="back_button">Back Button</string>
 
 
     <string-array name="priority">

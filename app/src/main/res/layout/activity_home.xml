@@ -21,6 +21,19 @@
         android:background="@color/white"
         android:src="@drawable/ic_menu" />
 
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:paddingTop="3dp"
+        android:text="First Last"
+        android:paddingBottom="10dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        />
+
     <LinearLayout
         android:id="@+id/date_selector"
         android:layout_width="match_parent"

@@ -32,5 +32,10 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"/>
+        <activity
+            android:name=".CalendarActivity"
+            android:exported="true"/>
+
+
     </application>
 </manifest>
