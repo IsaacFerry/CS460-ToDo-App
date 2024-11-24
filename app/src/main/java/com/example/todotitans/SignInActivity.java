@@ -22,10 +22,19 @@ public class SignInActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     @Override
-    protected  void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         authentication = FirebaseAuth.getInstance();
+        /*
+        FirebaseUser user = authentication.getCurrentUser();
+        if (user != null) {
+            // If user is already signed in, navigate to HomeActivity
+            Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+            startActivity(intent);
+            return; // Prevent further execution
+        }
+        */
 
         // provided a link for UI elements
         inputEmail = findViewById(R.id.inputEmail);
@@ -37,6 +46,8 @@ public class SignInActivity extends AppCompatActivity {
 
 
         MaterialButton signUpButton = findViewById(R.id.buttonSignUp);
+        MaterialButton forgotPasswordButton = findViewById(R.id.buttonForgotPassword);
+
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,9 +57,15 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
+        forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SignInActivity.this, ForgotPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
-
-
 
     private void signInUser() {
         loading(true);
@@ -58,6 +75,7 @@ public class SignInActivity extends AppCompatActivity {
         // Check for valid input
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please fill in both fields", Toast.LENGTH_SHORT).show();
+            loading(false);
             return;
         }
 
