@@ -1,5 +1,6 @@
 package com.example.todotitans;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -10,9 +11,16 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,7 +39,9 @@ public class HomeActivity extends AppCompatActivity {
     private ArrayAdapter<String> taskAdapter;
     private ArrayList<String> tasks;
     private Button logoutButton;
+    private TextView userNameTextView;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +54,7 @@ public class HomeActivity extends AppCompatActivity {
         removeTaskButton = findViewById(R.id.remove_task_button);
         menuButton = findViewById(R.id.menu_button);
         logoutButton = findViewById(R.id.logout_button);
+        userNameTextView = findViewById(R.id.user_name);
 
         // Initialize task list and adapter
         tasks = new ArrayList<>();
@@ -56,6 +67,28 @@ public class HomeActivity extends AppCompatActivity {
         // Populate days of the week
         populateDaysOfWeek();
 
+        // Get the user ID passed from the SignInActivity
+        String userId = getIntent().getStringExtra("USER_ID");
+
+        if (userId != null) {
+            // Fetch user details from Firebase Database
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String firstName = dataSnapshot.child("firstName").getValue(String.class);
+                    String lastName = dataSnapshot.child("lastName").getValue(String.class);
+                    String fullName = firstName + " " + lastName;
+                    userNameTextView.setText(fullName);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(HomeActivity.this, "Failed to retrieve user data", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
         // Add Task Button functionality
         addTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,11 +100,20 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         // Remove Task Button functionality
-        removeTaskButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeTask();
+        removeTaskButton.setOnClickListener(v -> {
+            // Show Toast notification after removing task
+            if (!tasks.isEmpty()) {
+                Toast.makeText(HomeActivity.this, "Task Removed", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(HomeActivity.this, "No tasks to remove", Toast.LENGTH_SHORT).show();
             }
+            removeTask();
+        });
+
+        currentDateTextView.setOnClickListener(v -> {
+            // Navigate to CalendarActivity when the calendar button is clicked
+            Intent intent = new Intent(HomeActivity.this, CalendarActivity.class);
+            startActivity(intent);
         });
 
 
