@@ -148,6 +148,10 @@ public class HomeActivity extends AppCompatActivity {
         SimpleDateFormat sdfDate = new SimpleDateFormat("d", Locale.getDefault());
         Calendar calendar = Calendar.getInstance();
 
+        // Get the current date for comparison
+        Calendar currentCalendar = Calendar.getInstance();
+        int currentDayOfMonth = currentCalendar.get(Calendar.DAY_OF_MONTH);
+
         daysTimeline.removeAllViews();
 
         // Display the current week with the current day on the left
@@ -160,7 +164,8 @@ public class HomeActivity extends AppCompatActivity {
             dayView.setTextSize(18);
             dayView.setPadding(18, 8, 18, 8);
 
-            if (i == 0) {
+            // Highlight the current date
+            if (calendar.get(Calendar.DAY_OF_MONTH) == currentDayOfMonth) {
                 dayView.setTypeface(Typeface.DEFAULT_BOLD);
             }
 
