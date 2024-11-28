@@ -9,9 +9,9 @@
     tools:context=".HomeActivity">
 
     <ImageButton
-        android:id="@+id/menu_button"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:id="@+id/logout_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="16dp"
@@ -19,46 +19,46 @@
         android:contentDescription="@string/settings_menu"
         android:scaleType="centerCrop"
         android:background="@color/white"
-        android:src="@drawable/ic_menu" />
+        android:src="@drawable/ic_logout" />
 
+    <!-- Task List -->
     <LinearLayout
         android:id="@+id/date_selector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_marginTop="16dp"
-        android:padding="20dp"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <Button
-            android:id="@+id/logout_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Log Out" />
+<!--        <Button-->
+<!--            android:id="@+id/logout_button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:text="Log Out" />-->
 
         <TextView
             android:id="@+id/current_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:textStyle="bold" />
 
         <!-- Days of the Week Timeline -->
         <LinearLayout
             android:id="@+id/days_timeline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <!-- Temporary Log Out Button -->
 
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Task List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/task_list"
         android:layout_width="match_parent"
