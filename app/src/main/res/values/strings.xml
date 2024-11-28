@@ -20,6 +20,9 @@
 
 
     <string name="select">Select Item</string>
+    <string name="back_button">Back Button</string>
+    <string name="security_question">Security Question</string>
+    <string name="what_was_the_name_of_your_first_school">What was the name of your first School?</string>
 
 
     <string-array name="priority">

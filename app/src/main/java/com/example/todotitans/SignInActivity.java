@@ -26,7 +26,7 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         authentication = FirebaseAuth.getInstance();
-        /*
+
         FirebaseUser user = authentication.getCurrentUser();
         if (user != null) {
             // If user is already signed in, navigate to HomeActivity
@@ -34,7 +34,7 @@ public class SignInActivity extends AppCompatActivity {
             startActivity(intent);
             return; // Prevent further execution
         }
-        */
+
 
         // provided a link for UI elements
         inputEmail = findViewById(R.id.inputEmail);
@@ -90,6 +90,7 @@ public class SignInActivity extends AppCompatActivity {
                         if (user != null) {
                             Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+                            intent.putExtra("USER_ID", user.getUid());
                             startActivity(intent);
                             finish();
                         }
