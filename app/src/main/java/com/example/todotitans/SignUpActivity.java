@@ -104,6 +104,7 @@ public class SignUpActivity extends AppCompatActivity {
                             user.put(Constants.KEY_EMAIL, email);
                             user.put(Constants.KEY_USER_ID, userId);
                             user.put(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
+                            user.put(Constants.KEY_SECURE_QUESTION, binding.inputSecurityQuestion.getText().toString());
 
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                             database.getReference(Constants.KEY_COLLECTION_USERS)

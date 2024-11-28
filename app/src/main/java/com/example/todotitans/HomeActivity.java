@@ -36,7 +36,7 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton removeTaskButton;
     private ImageButton menuButton;
     private ArrayList<String> tasks;
-    private Button logoutButton;
+    private ImageButton logoutButton;
     private TextView userNameTextView;
     private RecyclerView taskRecyclerView;
     private FirebaseAuth firebaseAuth;
@@ -60,7 +60,6 @@ public class HomeActivity extends AppCompatActivity {
         taskRecyclerView = findViewById(R.id.task_list);
         addTaskButton = findViewById(R.id.add_task_button);
         removeTaskButton = findViewById(R.id.remove_task_button);
-        menuButton = findViewById(R.id.menu_button);
         logoutButton = findViewById(R.id.logout_button);
         userNameTextView = findViewById(R.id.user_name);
 

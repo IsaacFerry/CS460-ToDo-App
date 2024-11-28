@@ -131,7 +131,9 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:textColor="@color/primary_text"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+
+            />
 
         <EditText
             android:id="@+id/inputSecurityQuestion"
@@ -163,6 +165,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginRight="10dp"
+                android:backgroundTint="@color/buttonColor"
                 app:cornerRadius="8sp" />
 
             <com.google.android.material.button.MaterialButton
@@ -173,6 +176,7 @@
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:backgroundTint="@color/buttonColor"
                 app:cornerRadius="8sp" />
 
 

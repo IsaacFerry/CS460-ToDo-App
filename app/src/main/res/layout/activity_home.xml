@@ -91,7 +91,9 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:padding="16dp"
-        android:gravity="center">
+        android:gravity="center"
+
+        >
 
         <!-- Remove Task Button -->
         <ImageButton
@@ -100,7 +102,7 @@
             android:layout_height="60dp"
             android:layout_marginEnd="32dp"
             android:background="@drawable/circular_button"
-            android:src="@drawable/remove_task"
+            android:src="@drawable/ic_delete"
             android:contentDescription="@string/remove_task"
             android:scaleType="centerInside" />
 
@@ -111,7 +113,7 @@
             android:layout_height="60dp"
             android:layout_marginStart="150dp"
             android:background="@drawable/circular_button"
-            android:src="@drawable/add_task"
+            android:src="@drawable/ic_create"
             android:contentDescription="@string/add_task"
             android:scaleType="centerInside" />
     </LinearLayout>

@@ -5,7 +5,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:backgroundTint="@color/buttonColor"
     tools:context=".SignInActivity">
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,15 +65,19 @@
             android:textSize="18sp" />
 
         <!-- Login Button -->
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonLogin"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
             android:text="@string/login"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:backgroundTint="@color/buttonColor"
             app:cornerRadius="8sp" />
 
         <LinearLayout
@@ -89,6 +95,7 @@
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:backgroundTint="@color/buttonColor"
                 app:cornerRadius="8sp" />
 
             <com.google.android.material.button.MaterialButton
@@ -101,6 +108,7 @@
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:backgroundTint="@color/buttonColor"
                 app:cornerRadius="8sp" />
 
         </LinearLayout>

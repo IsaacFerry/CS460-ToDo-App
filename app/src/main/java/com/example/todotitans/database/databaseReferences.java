@@ -16,9 +16,9 @@ public class databaseReferences {
         usersRef = database.getReference("users");
     }
 
-    public void addUser(String userId, String email, String password, String firstName, String lastName) {
-        // Create a User object without storing the password for security
-        User user = new User(userId, email, password, firstName, lastName);
+    public void addUser(String userId, String email, String password, String firstName, String lastName, String securePassword) {
+        // Create a User object
+        User user = new User(userId, email, password, firstName, lastName, securePassword);
 
         // Add the user data to the "users" node with userId as the key
         usersRef.child(userId).setValue(user)
