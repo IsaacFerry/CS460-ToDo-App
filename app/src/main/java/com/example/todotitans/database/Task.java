@@ -1,5 +1,10 @@
 package com.example.todotitans.database;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class Task {
 
     private String taskId;
@@ -80,5 +85,16 @@ public class Task {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    // Method to convert dueDate string to Date object
+    public Date getDueDateAsDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        try {
+            return sdf.parse(this.dueDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null; // or handle more gracefully depending on your app's needs
+        }
     }
 }

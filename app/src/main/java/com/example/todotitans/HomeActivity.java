@@ -1,6 +1,9 @@
 package com.example.todotitans;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -181,6 +185,7 @@ public class HomeActivity extends AppCompatActivity {
                             Task task = taskSnapshot.getValue(Task.class);
                             if (task != null) {
                                 taskList.add(task);
+                                scheduleNotification(task); // Schedule notification based on the task's due date and priority
                             }
                         }
                         taskAdapter.notifyDataSetChanged();
@@ -208,6 +213,38 @@ public class HomeActivity extends AppCompatActivity {
 
         taskAdapter.removeTasks(selectedTasks);
         Toast.makeText(this, "Selected tasks deleted", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void scheduleNotification(Task task) {
+        Date dueDate = task.getDueDateAsDate();
+        if (dueDate == null) {
+            Toast.makeText(this, "Invalid date format", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        long notificationTime = dueDate.getTime() - TimeUnit.MINUTES.toMillis(15); // Default for low priority
+
+        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, task.getTaskId());
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, "Your task " + task.getTitle() + " is due soon!");
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this, task.getTaskId().hashCode(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if ("Medium".equals(task.getPriorityLevel())) {
+            scheduleAlarm(dueDate.getTime() - TimeUnit.MINUTES.toMillis(30), pendingIntent);
+        } else if ("High".equals(task.getPriorityLevel())) {
+            // Schedule three notifications for high priority tasks
+            scheduleAlarm(dueDate.getTime() - TimeUnit.MINUTES.toMillis(60), pendingIntent);
+            scheduleAlarm(dueDate.getTime() - TimeUnit.MINUTES.toMillis(30), pendingIntent);
+        }
+        scheduleAlarm(notificationTime, pendingIntent); // Schedule the default notification
+    }
+
+    private void scheduleAlarm(long time, PendingIntent pendingIntent) {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent);
     }
 
 }
