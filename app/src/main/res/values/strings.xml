@@ -12,7 +12,7 @@
     <string name="login">Log In</string>
     <string name="forgot_password">Forgot Password</string>
     <string name="back_to_sign_in">Log In</string>
-    <string name="reset_password">Reset Password</string>
+    <string name="reveal_password">Reveal Password</string>
 
     <string name="remove_task" />
     <string name="add_task" />

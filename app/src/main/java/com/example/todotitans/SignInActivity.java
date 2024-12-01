@@ -31,6 +31,7 @@ public class SignInActivity extends AppCompatActivity {
         if (user != null) {
             // If user is already signed in, navigate to HomeActivity
             Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+            intent.putExtra("USER_ID", user.getUid());
             startActivity(intent);
             return; // Prevent further execution
         }

@@ -1,43 +1,92 @@
 package com.example.todotitans;
-
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.todotitans.databinding.ActivityForgotPasswordBinding;
+import com.example.todotitans.utilities.Constants;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class ForgotPasswordActivity extends Activity {
+    private ActivityForgotPasswordBinding binding;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forgot_password);
 
-        MaterialButton signInButton = findViewById(R.id.buttonBackToSignIn);
-        MaterialButton signUpButton = findViewById(R.id.buttonSignUp);
+        binding = ActivityForgotPasswordBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // navigation to sign in
-                Intent intent = new Intent(ForgotPasswordActivity.this, SignInActivity.class);
-                startActivity(intent);
-            }
+        MaterialButton signInButton = binding.buttonBackToSignIn;
+        MaterialButton signUpButton = binding.buttonSignUp;
+        MaterialButton forgotPasswordButton = binding.buttonResetPassword;
+
+        // Navigation to SignIn Activity
+        signInButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ForgotPasswordActivity.this, SignInActivity.class);
+            startActivity(intent);
         });
 
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // navigation to sign up
-                Intent intent = new Intent(ForgotPasswordActivity.this, SignUpActivity.class);
-                startActivity(intent);
-            }
+        // Navigation to SignUp Activity
+        signUpButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ForgotPasswordActivity.this, SignUpActivity.class);
+            startActivity(intent);
         });
+
+        forgotPasswordButton.setOnClickListener(v -> forgotPassword());
     }
 
     private void forgotPassword() {
-        return;
+        String email = binding.inputEmail.getText().toString().trim();
+        String secureQuestion = binding.inputSecurityQuestion.getText().toString().trim();
+
+        if (email.isEmpty() || secureQuestion.isEmpty()) {
+            Toast.makeText(getApplicationContext(), "please fill in both fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference usersRef = database.getReference(Constants.KEY_COLLECTION_USERS);
+
+        // Query to find the user by email and security question
+        usersRef.orderByChild(Constants.KEY_EMAIL).equalTo(email)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                                String storedSecureQuestion = userSnapshot.child(Constants.KEY_SECURE_QUESTION).getValue(String.class);
+                                String password = userSnapshot.child(Constants.KEY_PASSWORD).getValue(String.class);
+
+                                if (secureQuestion.equals(storedSecureQuestion)) {
+                                    // Password is revealed in a toast message
+                                    Toast.makeText(getApplicationContext(), "Your Password: " + password, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    // Incorrect security question response
+                                    Toast.makeText(getApplicationContext(), "Incorrect Security Question Response", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        } else {
+                            // User not found
+                            Toast.makeText(getApplicationContext(), "Email not found", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // Handle error if database query fails
+                        Toast.makeText(getApplicationContext(), "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }
