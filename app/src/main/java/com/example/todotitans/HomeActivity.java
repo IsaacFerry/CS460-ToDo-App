@@ -29,6 +29,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -152,6 +154,26 @@ public class HomeActivity extends AppCompatActivity {
         }
 
 
+        // Mark task as completed
+        taskAdapter.setOnTaskCompleteListener(task -> {
+            task.setStatus("Completed");
+            databaseReference.child(task.getTaskId()).setValue(task);
+            taskAdapter.notifyDataSetChanged();
+        });
+
+        // Edit task
+        taskAdapter.setOnTaskEditListener(task -> {
+            Intent intent = new Intent(HomeActivity.this, CadenActivity.class);
+            intent.putExtra("TASK_ID", task.getTaskId());
+            startActivity(intent);
+        });
+
+        // Edit task
+        taskAdapter.setOnTaskEditListener(task -> {
+            Intent intent = new Intent(HomeActivity.this, EditTaskActivity.class);
+            intent.putExtra("task", (Serializable) task);
+            startActivity(intent);
+        });
 
     }
 
@@ -166,19 +188,24 @@ public class HomeActivity extends AppCompatActivity {
         SimpleDateFormat sdfDate = new SimpleDateFormat("d", Locale.getDefault());
         Calendar calendar = Calendar.getInstance();
 
+        // Get the current date for comparison
+        Calendar currentCalendar = Calendar.getInstance();
+        int currentDayOfMonth = currentCalendar.get(Calendar.DAY_OF_MONTH);
+
         daysTimeline.removeAllViews();
 
         // Display the current week with the current day on the left
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 7; i++) {
             int dayOffset = (i - calendar.get(Calendar.DAY_OF_WEEK) + 1);
             calendar.add(Calendar.DAY_OF_MONTH, dayOffset);
 
             TextView dayView = new TextView(this);
             dayView.setText(String.format("%s %s", sdfDay.format(calendar.getTime()), sdfDate.format(calendar.getTime())));
-            dayView.setTextSize(18);
-            dayView.setPadding(18, 8, 18, 8);
+            dayView.setTextSize(15);
+            dayView.setPadding(12, 8, 12, 8);
 
-            if (i == 0) {
+            // Highlight the current date
+            if (calendar.get(Calendar.DAY_OF_MONTH) == currentDayOfMonth) {
                 dayView.setTypeface(Typeface.DEFAULT_BOLD);
             }
 

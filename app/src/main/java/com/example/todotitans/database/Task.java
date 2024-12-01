@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Task {
+import java.io.Serializable;
+public class Task implements Serializable{
 
     private String taskId;
     private String userId;
