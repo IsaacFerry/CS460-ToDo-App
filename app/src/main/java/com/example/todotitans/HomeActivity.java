@@ -177,14 +177,14 @@ public class HomeActivity extends AppCompatActivity {
         daysTimeline.removeAllViews();
 
         // Display the current week with the current day on the left
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 7; i++) {
             int dayOffset = (i - calendar.get(Calendar.DAY_OF_WEEK) + 1);
             calendar.add(Calendar.DAY_OF_MONTH, dayOffset);
 
             TextView dayView = new TextView(this);
             dayView.setText(String.format("%s %s", sdfDay.format(calendar.getTime()), sdfDate.format(calendar.getTime())));
-            dayView.setTextSize(18);
-            dayView.setPadding(18, 8, 18, 8);
+            dayView.setTextSize(15);
+            dayView.setPadding(12, 8, 12, 8);
 
             // Highlight the current date
             if (calendar.get(Calendar.DAY_OF_MONTH) == currentDayOfMonth) {
