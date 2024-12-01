@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,11 +23,29 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private Context context;
     private ArrayList<Task> tasks;
     private Set<Integer> selectedTasks;
+    private OnTaskCompleteListener onTaskCompleteListener;
+    private OnTaskEditListener onTaskEditListener;
 
     public TaskAdapter(Context context, ArrayList<Task> tasks) {
         this.context = context;
         this.tasks = tasks;
         this.selectedTasks = new HashSet<>();
+    }
+
+    public interface OnTaskCompleteListener {
+        void onTaskComplete(Task task);
+    }
+
+    public interface OnTaskEditListener {
+        void onTaskEdit(Task task);
+    }
+
+    public void setOnTaskCompleteListener(OnTaskCompleteListener listener) {
+        this.onTaskCompleteListener = listener;
+    }
+
+    public void setOnTaskEditListener(OnTaskEditListener listener) {
+        this.onTaskEditListener = listener;
     }
 
     @NonNull
@@ -48,6 +68,23 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         } else {
             holder.itemView.setBackgroundColor(Color.WHITE);
         }
+
+        // Handle task completion
+        holder.taskCompleteCheckBox.setChecked("Completed".equals(task.getStatus()));
+        holder.taskCompleteCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                if (onTaskCompleteListener != null) {
+                    onTaskCompleteListener.onTaskComplete(task);
+                }
+            }
+        });
+
+        // Handle task editing
+        holder.editTaskButton.setOnClickListener(v -> {
+            if (onTaskEditListener != null) {
+                onTaskEditListener.onTaskEdit(task);
+            }
+        });
 
         // Set click listener for selecting tasks
         holder.itemView.setOnClickListener(v -> {
@@ -83,12 +120,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
 
         TextView textTitle, descriptionTitle, dateText;
+        CheckBox taskCompleteCheckBox;
+        ImageView editTaskButton;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             textTitle = itemView.findViewById(R.id.textTitle);
             descriptionTitle = itemView.findViewById(R.id.descriptionTitle);
             dateText = itemView.findViewById(R.id.dateText);
+            taskCompleteCheckBox = itemView.findViewById(R.id.taskCompleteCheckBox);
+            editTaskButton = itemView.findViewById(R.id.editImage);
         }
     }
 }

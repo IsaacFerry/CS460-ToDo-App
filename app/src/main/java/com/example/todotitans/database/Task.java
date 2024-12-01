@@ -1,6 +1,7 @@
 package com.example.todotitans.database;
 
-public class Task {
+import java.io.Serializable;
+public class Task implements Serializable{
 
     private String taskId;
     private String userId;

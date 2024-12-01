@@ -21,6 +21,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -134,6 +136,26 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        // Mark task as completed
+        taskAdapter.setOnTaskCompleteListener(task -> {
+            task.setStatus("Completed");
+            databaseReference.child(task.getTaskId()).setValue(task);
+            taskAdapter.notifyDataSetChanged();
+        });
+
+        // Edit task
+        taskAdapter.setOnTaskEditListener(task -> {
+            Intent intent = new Intent(HomeActivity.this, CadenActivity.class);
+            intent.putExtra("TASK_ID", task.getTaskId());
+            startActivity(intent);
+        });
+
+        // Edit task
+        taskAdapter.setOnTaskEditListener(task -> {
+            Intent intent = new Intent(HomeActivity.this, EditTaskActivity.class);
+            intent.putExtra("task", (Serializable) task);
+            startActivity(intent);
+        });
 
     }
 
