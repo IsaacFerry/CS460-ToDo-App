@@ -14,6 +14,7 @@
         android:orientation="vertical">
 
         <!-- Team Logo Image -->
+
         <ImageView
             android:id="@+id/imageLogo"
             android:layout_width="150dp"
@@ -44,7 +45,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <EditText
@@ -121,17 +121,31 @@
             android:textSize="18sp" />
 
 
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonSignUp"
+        <TextView
+            android:id="@+id/inputSecurityQuestionView"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
-            android:text="@string/sign_up"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:cornerRadius="8sp" />
+            android:background="@drawable/background_input"
+            android:hint="@string/what_was_the_name_of_your_first_school"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/primary_text"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/inputSecurityQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_input"
+            android:hint="@string/security_question"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/primary_text"
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -145,6 +159,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/login"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginRight="10dp"
+                app:cornerRadius="8sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonSignUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_up"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
