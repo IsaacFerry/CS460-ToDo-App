@@ -89,12 +89,13 @@ public class Task {
 
     // Method to convert dueDate string to Date object
     public Date getDueDateAsDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        String dueDateString = this.dueDate; // Replace with the correct field in your Task object
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         try {
-            return sdf.parse(this.dueDate);
-        } catch (ParseException e) {
+            return sdf.parse(dueDateString);
+        } catch (Exception e) {
             e.printStackTrace();
-            return null; // or handle more gracefully depending on your app's needs
+            return null; // Return null if parsing fails
         }
     }
 }
