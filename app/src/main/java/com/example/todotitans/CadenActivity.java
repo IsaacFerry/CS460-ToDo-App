@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,14 +77,23 @@ public class CadenActivity extends AppCompatActivity {
     }
 
     private void openDialog() {
+        // Get the current date
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // Create DatePickerDialog with current date as default
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (datePicker, year, month, dayOfMonth) -> {
+            textDate.setText(String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth));
+        }, currentYear, currentMonth, currentDay);
+
+        // Create TimePickerDialog with a default time of 15:00
         TimePickerDialog timePickerDialog = new TimePickerDialog(this, (timePicker, hourOfDay, minute) -> {
             textTime.setText(String.format("%02d:%02d", hourOfDay, minute));
         }, 15, 0, true);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (datePicker, year, month, dayOfMonth) -> {
-            textDate.setText(String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth));
-        }, 2024, 0, 15);
-
+        // Show the dialogs
         datePickerDialog.show();
         timePickerDialog.show();
     }
@@ -101,14 +111,6 @@ public class CadenActivity extends AppCompatActivity {
             editTaskTitle.setError("Task title is required!");
             return;
         }
-        if (TextUtils.isEmpty(taskDate)) {
-            Toast.makeText(this, "Please select a due date", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(taskTime)) {
-            Toast.makeText(this, "Please select a time", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         // Get the current user ID from Firebase Authentication
         String userId = firebaseAuth.getCurrentUser().getUid();
@@ -121,11 +123,17 @@ public class CadenActivity extends AppCompatActivity {
         Map<String, Object> task = new HashMap<>();
         task.put("taskId", taskId);
         task.put("userId", userId);
-        task.put("priorityLevel", priorityLevel); // Priority as Low, Medium, or High
+        task.put("priorityLevel", priorityLevel);
         task.put("title", taskTitle);
         task.put("description", taskDescription);
-        task.put("dueDate", taskDate + " " + taskTime);
         task.put("status", status);
+
+        // Only set dueDate if both date and time are provided
+        if (!TextUtils.isEmpty(taskDate) && !TextUtils.isEmpty(taskTime)) {
+            task.put("dueDate", taskDate + " " + taskTime);
+        } else {
+            task.put("dueDate", ""); // Save as an empty string
+        }
 
         // Save task to Firebase
         databaseReference.child(taskId).setValue(task)
@@ -138,4 +146,5 @@ public class CadenActivity extends AppCompatActivity {
                     }
                 });
     }
+
 }

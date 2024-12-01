@@ -2,6 +2,7 @@ package com.example.todotitans;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todotitans.database.Task;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
@@ -55,13 +59,39 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return new TaskViewHolder(view);
     }
 
+    // Helper method to determine the day suffix
+    private String getDaySuffix(int day) {
+        if (day >= 11 && day <= 13) {
+            return "th"; // Special case for 11th, 12th, 13th
+        }
+        switch (day % 10) {
+            case 1:
+                return "st";
+            case 2:
+                return "nd";
+            case 3:
+                return "rd";
+            default:
+                return "th";
+        }
+    }
+
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         Task task = tasks.get(position);
+
+
         holder.textTitle.setText(task.getTitle());
         holder.descriptionTitle.setText(task.getDescription());
-        holder.dateText.setText(task.getDueDate());
 
+
+        // Check if the dueDate is empty or null
+        if (task.getDueDate() != null && !task.getDueDate().trim().isEmpty()) {
+            holder.dateText.setText(task.getDueDate());
+            holder.dateText.setVisibility(View.VISIBLE); // Show the TextView
+        } else {
+            holder.dateText.setVisibility(View.GONE); // Hide the TextView if no due date
+        }
         // Highlight selected items
         if (selectedTasks.contains(position)) {
             holder.itemView.setBackgroundColor(Color.LTGRAY);

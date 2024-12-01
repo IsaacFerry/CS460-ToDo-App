@@ -51,10 +51,9 @@
                 android:id="@+id/dateText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Date"
                 android:textColor="@color/black"
                 android:layout_marginVertical="4dp"
-                android:textSize="18sp"/>
+                android:textSize="18sp" />
 
 
 

@@ -67,25 +67,25 @@
                 android:id="@+id/showTextDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Date"
+                android:hint="Date"
                 android:paddingEnd="20dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:textStyle="bold"
                 android:textSize="16sp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/showTextTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Time"
+                android:hint="Time"
                 android:paddingEnd="20dp"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:textStyle="bold"
                 android:textSize="16sp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/dateAndTimeButton"

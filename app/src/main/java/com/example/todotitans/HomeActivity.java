@@ -222,15 +222,15 @@ public class HomeActivity extends AppCompatActivity {
                 .addValueEventListener(new com.google.firebase.database.ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull com.google.firebase.database.DataSnapshot snapshot) {
-                        taskList.clear();
+                        taskList.clear(); // Clear the task list
                         for (com.google.firebase.database.DataSnapshot taskSnapshot : snapshot.getChildren()) {
                             Task task = taskSnapshot.getValue(Task.class);
                             if (task != null) {
                                 taskList.add(task);
-                                scheduleNotification(task); // Schedule notification based on the task's due date and priority
+                                scheduleNotification(task); // Schedule notifications if necessary
                             }
                         }
-                        taskAdapter.notifyDataSetChanged();
+                        taskAdapter.notifyDataSetChanged(); // Refresh RecyclerView
                     }
 
                     @Override
@@ -259,11 +259,17 @@ public class HomeActivity extends AppCompatActivity {
 
 
     private void scheduleNotification(Task task) {
+        // Check if the due date is empty or null
+        if (task.getDueDate() == null || task.getDueDate().trim().isEmpty()) {
+            Log.d("NotificationDebug", "No due date for task: " + task.getTitle());
+            return; // Skip scheduling notifications if no due date
+        }
+
+        // Parse the due date into a Date object
         Date dueDate = task.getDueDateAsDate();
         if (dueDate == null) {
             Log.d("NotificationDebug", "Invalid date format for task: " + task.getTitle() + ", dueDate: " + task.getDueDate());
-            Toast.makeText(this, "Invalid date format", Toast.LENGTH_SHORT).show();
-            return;
+            return; // Skip scheduling if the date format is invalid
         }
 
         long dueTimeMillis = dueDate.getTime();
@@ -278,7 +284,7 @@ public class HomeActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 this, task.getTaskId().hashCode(), notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-
+        // Schedule notifications based on priority
         if ("High".equalsIgnoreCase(priority)) {
             scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(60), pendingIntent, task.getTaskId() + "_60min");
             scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(30), pendingIntent, task.getTaskId() + "_30min");
