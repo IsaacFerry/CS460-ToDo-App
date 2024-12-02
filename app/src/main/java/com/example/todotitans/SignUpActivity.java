@@ -54,7 +54,10 @@ public class SignUpActivity extends AppCompatActivity {
      * Handles user interactions for navigating back or starting the registration process.
      */
     private void setListeners() {
-        binding.buttonLogin.setOnClickListener(v -> onBackPressed());
+        binding.buttonLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
+            startActivity(intent);
+        });
 
         binding.buttonSignUp.setOnClickListener(v -> {
             if(isValidSignUpDetails()){
