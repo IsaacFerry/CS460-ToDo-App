@@ -264,6 +264,7 @@ public class HomeActivity extends AppCompatActivity {
                             Task task = taskSnapshot.getValue(Task.class);
                             if (task != null) {
                                 taskList.add(task);
+                                scheduleNotification(task);
                             }
                         }
 
