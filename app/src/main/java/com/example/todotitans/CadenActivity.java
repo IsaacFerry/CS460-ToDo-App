@@ -2,11 +2,13 @@ package com.example.todotitans;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +34,7 @@ public class CadenActivity extends AppCompatActivity {
     private TextView textTime;
     private Button dateAndTimeButton;
     private Button saveTaskButton;
+    private ImageButton xButton;
     private Spinner spinnerPriority;
     private TextInputEditText editTaskTitle;
     private TextInputEditText editTaskDescription;
@@ -54,6 +57,7 @@ public class CadenActivity extends AppCompatActivity {
         textTime = findViewById(R.id.showTextTime);
         dateAndTimeButton = findViewById(R.id.dateAndTimeButton);
         saveTaskButton = findViewById(R.id.saveTaskButton);
+        xButton = findViewById(R.id.xButton);
         editTaskTitle = findViewById(R.id.editTaskTitle);
         editTaskDescription = findViewById(R.id.editTaskNotes);
 
@@ -77,6 +81,12 @@ public class CadenActivity extends AppCompatActivity {
             public void onClick(View v) {
                 saveTaskToDatabase();
             }
+        });
+
+        // Navigate to HomeActivity when the 'X' button is clicked
+        xButton.setOnClickListener(v -> {
+            Intent intent = new Intent(CadenActivity.this, HomeActivity.class);
+            startActivity(intent);
         });
     }
 
