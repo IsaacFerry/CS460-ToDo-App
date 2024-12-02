@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 
 
-public class Task implements Serializable{
+public class Task implements Serializable {
 
     private String taskId;
     private String userId;
@@ -93,7 +93,7 @@ public class Task implements Serializable{
     // Method to convert dueDate string to Date object
     public Date getDueDateAsDate() {
         String dueDateString = this.dueDate; // Replace with the correct field in your Task object
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy HH:mm", Locale.getDefault());
         try {
             return sdf.parse(dueDateString);
         } catch (Exception e) {
@@ -101,4 +101,5 @@ public class Task implements Serializable{
             return null; // Return null if parsing fails
         }
     }
+
 }

@@ -18,8 +18,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class CadenActivity extends AppCompatActivity {
@@ -119,6 +123,18 @@ public class CadenActivity extends AppCompatActivity {
         // Create a unique ID for the task
         String taskId = databaseReference.push().getKey();
 
+        // Create a SimpleDateFormat object with the desired format
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy HH:mm", Locale.getDefault());
+        String formattedDate = "";
+        try {
+            // Combine date and time into a single string and format it
+            String combinedDateTime = taskDate + " " + taskTime;
+            Date parsedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(combinedDateTime);
+            formattedDate = dateFormat.format(parsedDate); // Format the date
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         // Create a task map
         Map<String, Object> task = new HashMap<>();
         task.put("taskId", taskId);
@@ -129,8 +145,8 @@ public class CadenActivity extends AppCompatActivity {
         task.put("status", status);
 
         // Only set dueDate if both date and time are provided
-        if (!TextUtils.isEmpty(taskDate) && !TextUtils.isEmpty(taskTime)) {
-            task.put("dueDate", taskDate + " " + taskTime);
+        if (!TextUtils.isEmpty(formattedDate)) {
+            task.put("dueDate", formattedDate);
         } else {
             task.put("dueDate", ""); // Save as an empty string
         }
@@ -146,5 +162,6 @@ public class CadenActivity extends AppCompatActivity {
                     }
                 });
     }
+
 
 }

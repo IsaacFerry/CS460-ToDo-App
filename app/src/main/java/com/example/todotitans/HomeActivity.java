@@ -259,58 +259,59 @@ public class HomeActivity extends AppCompatActivity {
 
 
     private void scheduleNotification(Task task) {
-        // Check if the due date is empty or null
         if (task.getDueDate() == null || task.getDueDate().trim().isEmpty()) {
             Log.d("NotificationDebug", "No due date for task: " + task.getTitle());
-            return; // Skip scheduling notifications if no due date
+            return;
         }
 
-        // Parse the due date into a Date object
         Date dueDate = task.getDueDateAsDate();
         if (dueDate == null) {
-            Log.d("NotificationDebug", "Invalid date format for task: " + task.getTitle() + ", dueDate: " + task.getDueDate());
-            return; // Skip scheduling if the date format is invalid
+            Log.d("NotificationDebug", "Invalid date format for task: " + task.getTitle());
+            return;
         }
 
         long dueTimeMillis = dueDate.getTime();
         String priority = task.getPriorityLevel();
 
-        Log.d("NotificationDebug", "Task: " + task.getTitle() + ", Due: " + dueDate.toString() + ", Priority: " + priority);
-
-        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, task.getTaskId());
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, "Your task '" + task.getTitle() + "' is due soon!");
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                this, task.getTaskId().hashCode(), notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
-        // Schedule notifications based on priority
         if ("High".equalsIgnoreCase(priority)) {
-            scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(60), pendingIntent, task.getTaskId() + "_60min");
-            scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(30), pendingIntent, task.getTaskId() + "_30min");
-            scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(15), pendingIntent, task.getTaskId() + "_15min");
+            scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(60), task, 60);
+            scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(30), task, 30);
+            scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(15), task, 15);
         } else if ("Medium".equalsIgnoreCase(priority)) {
-            scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(30), pendingIntent, task.getTaskId() + "_30min");
-            scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(15), pendingIntent, task.getTaskId() + "_15min");
+            scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(30), task, 30);
+            scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(15), task, 15);
         } else if ("Low".equalsIgnoreCase(priority)) {
-            scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(15), pendingIntent, task.getTaskId() + "_15min");
+            scheduleAlarm(dueTimeMillis - TimeUnit.MINUTES.toMillis(15), task, 15);
         }
     }
 
-    private void scheduleAlarm(long time, PendingIntent pendingIntent, String tag) {
+
+    private void scheduleAlarm(long time, Task task, int minutesBefore) {
         if (time <= System.currentTimeMillis()) {
-            Log.d("NotificationDebug", "Skipping alarm as the scheduled time is in the past.");
+            Log.d("NotificationDebug", "Skipping alarm for task: " + task.getTitle() + " as the time is in the past.");
             return;
         }
 
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Log.d("NotificationDebug", "Scheduling alarm for: " + tag + " at " + new Date(time));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, pendingIntent);
-        } else {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent);
-        }
+        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+    notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, task.getTaskId());
+    notificationIntent.putExtra(
+    NotificationPublisher.NOTIFICATION,
+            "Your task '" + task.getTitle() + "' is due in " + minutesBefore + " minutes!"
+            );
+
+    PendingIntent pendingIntent = PendingIntent.getBroadcast(
+            this, (task.getTaskId() + "_" + minutesBefore).hashCode(), notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+    Log.d("NotificationDebug", "Scheduling alarm for " + task.getTitle() + " in " + minutesBefore + " minutes at " + new Date(time));
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+    } else {
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent);
     }
+}
+
+
 
     private void cancelAlarm(PendingIntent pendingIntent) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
