@@ -1,97 +1,141 @@
 package com.example.todotitans;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.todotitans.database.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
 public class EditTaskActivity extends AppCompatActivity {
 
-    private EditText editTitle, editDescription, editDate;
-    private Button saveButton;
+    private EditText editTitle, editDescription;
+    private TextView textDate, textTime;
+    private Button dateAndTimeButton, saveTaskButton;
+    private Spinner prioritySpinner;
     private Task taskToEdit;
     private DatabaseReference databaseReference;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.task_layout);  // Inflate the task_layout XML
+        setContentView(R.layout.edit_task);  // Inflate the correct edit_task layout
 
         // Get the task passed from the previous activity
         taskToEdit = (Task) getIntent().getSerializableExtra("task");
 
         // Initialize Firebase Database reference
         databaseReference = FirebaseDatabase.getInstance().getReference("Tasks");
+        firebaseAuth = FirebaseAuth.getInstance();
 
-        // Initialize the views
-        TextView textTitle = findViewById(R.id.textTitle);
-        TextView descriptionTitle = findViewById(R.id.descriptionTitle);
-        TextView dateText = findViewById(R.id.dateText);
+        // Initialize views
+        editTitle = findViewById(R.id.editTaskTitle);
+        editDescription = findViewById(R.id.editTaskNotes);
+        textDate = findViewById(R.id.showTextDate);
+        textTime = findViewById(R.id.showTextTime);
+        dateAndTimeButton = findViewById(R.id.dateAndTimeButton);
+        saveTaskButton = findViewById(R.id.saveTaskButton);
+        prioritySpinner = findViewById(R.id.priorityButton);
 
-        // Convert TextViews into EditTexts for editing
-        editTitle = new EditText(this);
-        editDescription = new EditText(this);
-        editDate = new EditText(this);
+        // Set up priority dropdown
+        ArrayAdapter<CharSequence> priorityAdapter = ArrayAdapter.createFromResource(this,
+                R.array.priority, android.R.layout.simple_spinner_item);
+        priorityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        prioritySpinner.setAdapter(priorityAdapter);
 
-        // Replace TextViews with EditTexts
-        ((ViewGroup) textTitle.getParent()).removeView(textTitle);
-        ((ViewGroup) descriptionTitle.getParent()).removeView(descriptionTitle);
-        ((ViewGroup) dateText.getParent()).removeView(dateText);
-
-        ((ViewGroup) findViewById(R.id.editAndDelete)).addView(editTitle);
-        ((ViewGroup) findViewById(R.id.editAndDelete)).addView(editDescription);
-        ((ViewGroup) findViewById(R.id.editAndDelete)).addView(editDate);
-
-        // Set the initial text values to the EditTexts
+        // Pre-fill data
         editTitle.setText(taskToEdit.getTitle());
         editDescription.setText(taskToEdit.getDescription());
-        editDate.setText(taskToEdit.getDueDate());
+        textDate.setText(taskToEdit.getDueDate().split(" ")[0]); // Assuming format: YYYY-MM-DD
+        textTime.setText(taskToEdit.getDueDate().split(" ")[1]); // Assuming format: HH:MM
+        int priorityIndex = priorityAdapter.getPosition(taskToEdit.getPriorityLevel());
+        prioritySpinner.setSelection(priorityIndex);
 
-        // Hide the "edit" icon and "delete" button
-        ImageView editImage = findViewById(R.id.editImage);
-        editImage.setVisibility(View.GONE);
+        // Handle Date and Time Button click
+        dateAndTimeButton.setOnClickListener(v -> openDateTimeDialog());
 
-        // Add a save button programmatically
-        saveButton = new Button(this);
-        saveButton.setText("Save");
-        ((ViewGroup) findViewById(R.id.editAndDelete)).addView(saveButton);
-
-        // Handle save button click
-        saveButton.setOnClickListener(v -> {
-            // Save the updated task
-            String updatedTitle = editTitle.getText().toString();
-            String updatedDescription = editDescription.getText().toString();
-            String updatedDate = editDate.getText().toString();
-
-            // Update task object
-            taskToEdit.setTitle(updatedTitle);
-            taskToEdit.setDescription(updatedDescription);
-            taskToEdit.setDueDate(updatedDate);
-
-            // Save the updated task to the database
-            saveUpdatedTask(taskToEdit);
-        });
+        // Handle Save Task Button click
+        saveTaskButton.setOnClickListener(v -> saveUpdatedTask());
     }
 
-    // Method to save the updated task to Firebase
-    private void saveUpdatedTask(Task task) {
-        databaseReference.child(task.getTaskId()).setValue(task)
+    private void openDateTimeDialog() {
+        // Get the current date
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute = calendar.get(Calendar.MINUTE);
+
+        // DatePicker Dialog
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (datePicker, year, month, dayOfMonth) -> {
+            textDate.setText(String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth));
+        }, currentYear, currentMonth, currentDay);
+
+        // TimePicker Dialog
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, (timePicker, hourOfDay, minute) -> {
+            textTime.setText(String.format("%02d:%02d", hourOfDay, minute));
+        }, currentHour, currentMinute, true);
+
+        // Show the dialogs
+        datePickerDialog.show();
+        timePickerDialog.show();
+    }
+
+    private void saveUpdatedTask() {
+        // Get the updated values
+        String updatedTitle = editTitle.getText().toString().trim();
+        String updatedDescription = editDescription.getText().toString().trim();
+        String updatedDate = textDate.getText().toString().trim();
+        String updatedTime = textTime.getText().toString().trim();
+        String updatedPriority = prioritySpinner.getSelectedItem().toString();
+
+        // Validate fields
+        if (TextUtils.isEmpty(updatedTitle)) {
+            editTitle.setError("Task title is required!");
+            return;
+        }
+
+        // Prepare the updated task data
+        String taskId = taskToEdit.getTaskId();
+        String userId = firebaseAuth.getCurrentUser().getUid();
+        String status = "Pending"; // Default status if not provided
+        String dueDate = updatedDate + " " + updatedTime;
+
+        Map<String, Object> updatedTask = new HashMap<>();
+        updatedTask.put("taskId", taskId);
+        updatedTask.put("userId", userId);
+        updatedTask.put("priorityLevel", updatedPriority);
+        updatedTask.put("title", updatedTitle);
+        updatedTask.put("description", updatedDescription);
+        updatedTask.put("status", status);
+        updatedTask.put("dueDate", dueDate);
+
+        // Save the updated task in Firebase
+        databaseReference.child(taskId).setValue(updatedTask)
                 .addOnCompleteListener(task1 -> {
                     if (task1.isSuccessful()) {
                         Toast.makeText(EditTaskActivity.this, "Task updated successfully", Toast.LENGTH_SHORT).show();
-                        finish(); // Close the activity and return to the previous one
+                        finish(); // Close the activity
                     } else {
-                        Toast.makeText(EditTaskActivity.this, "Failed to update task. Please try again.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditTaskActivity.this, "Failed to update task. Try again.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

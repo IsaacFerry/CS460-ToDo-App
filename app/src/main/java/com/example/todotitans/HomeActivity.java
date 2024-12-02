@@ -1,6 +1,5 @@
 package com.example.todotitans;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -55,7 +54,7 @@ public class HomeActivity extends AppCompatActivity {
     private TaskAdapter taskAdapter;
     private ArrayList<Task> taskList;
 
-    @SuppressLint("MissingInflatedId")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +75,7 @@ public class HomeActivity extends AppCompatActivity {
 
         // Set up RecyclerView
         taskList = new ArrayList<>();
-        taskAdapter = new TaskAdapter(this, taskList);
+        taskAdapter = new TaskAdapter(this, taskList, databaseReference);
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         taskRecyclerView.setAdapter(taskAdapter);
 
@@ -154,14 +153,22 @@ public class HomeActivity extends AppCompatActivity {
         }
 
 
-        // Mark task as completed
+        // Mark task as completed or uncheck to reset the status
         taskAdapter.setOnTaskCompleteListener(task -> {
-            task.setStatus("Completed");
-            databaseReference.child(task.getTaskId()).setValue(task);
-            taskAdapter.notifyDataSetChanged();
+            // Toggle the task status between "Completed" and "Pending"
+            if ("Completed".equals(task.getStatus())) {
+                task.setStatus("Pending");
+            } else {
+                task.setStatus("Completed");
+            }
+
+            // Save the updated task back to Firebase
+            databaseReference.child(task.getTaskId()).setValue(task)
+                    .addOnSuccessListener(aVoid -> taskAdapter.notifyDataSetChanged())
+                    .addOnFailureListener(e -> Toast.makeText(HomeActivity.this, "Failed to update task", Toast.LENGTH_SHORT).show());
         });
 
-        // Edit task
+        // New task
         taskAdapter.setOnTaskEditListener(task -> {
             Intent intent = new Intent(HomeActivity.this, CadenActivity.class);
             intent.putExtra("TASK_ID", task.getTaskId());

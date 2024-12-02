@@ -9,11 +9,13 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todotitans.database.Task;
+import com.google.firebase.database.DatabaseReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,16 +26,18 @@ import java.util.Set;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
+    private final DatabaseReference databaseReference;
     private Context context;
     private ArrayList<Task> tasks;
     private Set<Integer> selectedTasks;
     private OnTaskCompleteListener onTaskCompleteListener;
     private OnTaskEditListener onTaskEditListener;
 
-    public TaskAdapter(Context context, ArrayList<Task> tasks) {
+    public TaskAdapter(Context context, ArrayList<Task> tasks, DatabaseReference databaseReference) {
         this.context = context;
         this.tasks = tasks;
         this.selectedTasks = new HashSet<>();
+        this.databaseReference = databaseReference;
     }
 
     public interface OnTaskCompleteListener {
@@ -100,13 +104,25 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
 
         // Handle task completion
+        // Set the checkbox state based on task status
         holder.taskCompleteCheckBox.setChecked("Completed".equals(task.getStatus()));
+
+        // Handle task completion/uncompletion when the checkbox is clicked
         holder.taskCompleteCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                if (onTaskCompleteListener != null) {
-                    onTaskCompleteListener.onTaskComplete(task);
-                }
+                task.setStatus("Completed"); // Mark the task as completed
+            } else {
+                task.setStatus("Pending"); // Mark the task as pending
             }
+
+            // Save the updated task to Firebase
+            databaseReference.child(task.getTaskId()).setValue(task)
+                    .addOnSuccessListener(aVoid -> {
+                        notifyDataSetChanged();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(context, "Failed to update task", Toast.LENGTH_SHORT).show();
+                    });
         });
 
         // Handle task editing
