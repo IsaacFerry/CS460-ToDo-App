@@ -8,15 +8,24 @@ import com.example.todotitans.databinding.ActivityCalendarBinding;
 
 public class CalendarActivity extends AppCompatActivity {
 
+    /** The binding object used to access the views defined in the layout file. */
     private ActivityCalendarBinding binding;
 
+    /**
+     * Called when the activity is starting. This is where most initialization
+     * should occur, including setting up the layout and initializing the back button.
+     *
+     * @param savedInstanceState If the activity is being reinitialized after being
+     *                           previously shut down, this Bundle contains the most recent
+     *                           data supplied; otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityCalendarBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Initialize the back button
+        // Initialize and set up the back button
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -25,7 +34,5 @@ public class CalendarActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-        // You can initialize and set up your calendar view here
     }
 }

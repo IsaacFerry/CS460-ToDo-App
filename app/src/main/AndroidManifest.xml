@@ -47,7 +47,7 @@
             android:name=".ForgotPasswordActivity"
             android:exported="true" />
 
-        <activity android:name=".CadenActivity"/>
+        <activity android:name=".CreateTaskActivity"/>
         <activity
             android:name=".CalendarActivity"
             android:exported="true"/>

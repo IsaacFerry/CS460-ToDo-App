@@ -12,7 +12,6 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,7 +27,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,14 +36,21 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 
+/**
+ * The {@code HomeActivity} class serves as the main screen of the application.
+ * <p>
+ * This activity provides functionality for managing tasks, including viewing, creating, editing, deleting,
+ * and scheduling notifications. It also displays the current date and a timeline of the week, and allows
+ * navigation to other activities such as {@code SignInActivity}, {@code CadenActivity}, and {@code EditTaskActivity}.
+ * </p>
+ */
 public class HomeActivity extends AppCompatActivity {
 
     private TextView currentDateTextView;
     private LinearLayout daysTimeline;
     private ImageButton addTaskButton;
     private ImageButton removeTaskButton;
-    private ImageButton menuButton;
-    private ArrayList<String> tasks;
+
     private ImageButton logoutButton;
     private TextView userNameTextView;
     private RecyclerView taskRecyclerView;
@@ -55,6 +60,12 @@ public class HomeActivity extends AppCompatActivity {
     private ArrayList<Task> taskList;
 
 
+    /**
+     * Called when the activity is starting. Initializes the layout, Firebase references, task list, and listeners.
+     *
+     * @param savedInstanceState If the activity is being reinitialized after being previously shut down,
+     *                           this Bundle contains the most recent data supplied; otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +124,7 @@ public class HomeActivity extends AppCompatActivity {
 
         // Add Task Button functionality
         addTaskButton.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, CadenActivity.class);
+            Intent intent = new Intent(HomeActivity.this, CreateTaskActivity.class);
             startActivity(intent);
         });
 
@@ -170,7 +181,7 @@ public class HomeActivity extends AppCompatActivity {
 
         // New task
         taskAdapter.setOnTaskEditListener(task -> {
-            Intent intent = new Intent(HomeActivity.this, CadenActivity.class);
+            Intent intent = new Intent(HomeActivity.this, CreateTaskActivity.class);
             intent.putExtra("TASK_ID", task.getTaskId());
             startActivity(intent);
         });
@@ -184,12 +195,24 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Sets the current date in the UI.
+     * <p>
+     * The date is displayed in the format "MMMM yyyy".
+     * </p>
+     */
     private void setCurrentDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
         String currentDate = sdf.format(new Date());
         currentDateTextView.setText(currentDate);
     }
 
+    /**
+     * Populates the timeline with the days of the current week.
+     * <p>
+     * Highlights the current day and formats the days using abbreviations and day numbers.
+     * </p>
+     */
     private void populateDaysOfWeek() {
         SimpleDateFormat sdfDay = new SimpleDateFormat("EEE", Locale.getDefault());
         SimpleDateFormat sdfDate = new SimpleDateFormat("d", Locale.getDefault());
@@ -222,6 +245,13 @@ public class HomeActivity extends AppCompatActivity {
             calendar.add(Calendar.DAY_OF_MONTH, -dayOffset);
         }
     }
+
+    /**
+     * Fetches tasks for the current user from the Firebase Realtime Database and populates the task list.
+     * <p>
+     * Tasks are sorted by their due date and displayed in a RecyclerView.
+     * </p>
+     */
     private void fetchUserTasks() {
         String userId = firebaseAuth.getCurrentUser().getUid();
 
@@ -260,7 +290,12 @@ public class HomeActivity extends AppCompatActivity {
                 });
     }
 
-    // Delete a task functionality
+    /**
+     * Deletes selected tasks from the Firebase Realtime Database and updates the UI.
+     * <p>
+     * If no tasks are selected, a message is displayed.
+     * </p>
+     */
     private void deleteSelectedTasks() {
         ArrayList<Task> selectedTasks = taskAdapter.getSelectedTasks();
 
@@ -277,7 +312,14 @@ public class HomeActivity extends AppCompatActivity {
         Toast.makeText(this, "Selected tasks deleted", Toast.LENGTH_SHORT).show();
     }
 
-
+    /**
+     * Schedules notifications for a given task based on its priority level.
+     * <p>
+     * Notifications are set at specific intervals before the task's due date.
+     * </p>
+     *
+     * @param task The task for which notifications should be scheduled.
+     */
     private void scheduleNotification(Task task) {
         if (task.getDueDate() == null || task.getDueDate().trim().isEmpty()) {
             Log.d("NotificationDebug", "No due date for task: " + task.getTitle());
@@ -305,7 +347,16 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * Schedules an alarm for a task notification.
+     * <p>
+     * The alarm is set to trigger at the specified time and will display a notification.
+     * </p>
+     *
+     * @param time           The time at which the alarm should trigger.
+     * @param task           The task associated with the notification.
+     * @param minutesBefore  The number of minutes before the due date when the notification should appear.
+     */
     private void scheduleAlarm(long time, Task task, int minutesBefore) {
         if (time <= System.currentTimeMillis()) {
             Log.d("NotificationDebug", "Skipping alarm for task: " + task.getTitle() + " as the time is in the past.");
@@ -331,8 +382,11 @@ public class HomeActivity extends AppCompatActivity {
     }
 }
 
-
-
+    /**
+     * Cancels an alarm associated with a specific {@link PendingIntent}.
+     *
+     * @param pendingIntent The {@link PendingIntent} for the alarm to be canceled.
+     */
     private void cancelAlarm(PendingIntent pendingIntent) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);

@@ -12,14 +12,11 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,7 +25,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class CadenActivity extends AppCompatActivity {
+public class CreateTaskActivity extends AppCompatActivity {
 
     private TextView textDate;
     private TextView textTime;
@@ -42,6 +39,13 @@ public class CadenActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
 
+    /**
+     * Handles the creation of the activity, initializes views, and sets up listeners
+     * for interacting with the UI and saving tasks to the Firebase Realtime Database.
+     *
+     * @param savedInstanceState If the activity is being reinitialized after being previously shut down,
+     *                           this Bundle contains the most recent data supplied; otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,11 +89,18 @@ public class CadenActivity extends AppCompatActivity {
 
         // Navigate to HomeActivity when the 'X' button is clicked
         xButton.setOnClickListener(v -> {
-            Intent intent = new Intent(CadenActivity.this, HomeActivity.class);
+            Intent intent = new Intent(CreateTaskActivity.this, HomeActivity.class);
             startActivity(intent);
         });
     }
 
+    /**
+     * Opens a dialog to allow the user to select a date and time for the task.
+     * <p>
+     * This method displays both a {@link DatePickerDialog} and a {@link TimePickerDialog}.
+     * The selected values are displayed in the corresponding UI elements for date and time.
+     * </p>
+     */
     private void openDialog() {
         // Get the current date
         Calendar calendar = Calendar.getInstance();
@@ -112,6 +123,14 @@ public class CadenActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    /**
+     * Saves the task data to Firebase Realtime Database.
+     * <p>
+     * This method validates user input, formats the due date and time, and creates a new task entry
+     * in the Firebase database. If successful, the task is saved, and the activity finishes; otherwise,
+     * an error message is displayed.
+     * </p>
+     */
     private void saveTaskToDatabase() {
         // Get input values
         String taskTitle = editTaskTitle.getText().toString().trim();
@@ -165,10 +184,10 @@ public class CadenActivity extends AppCompatActivity {
         databaseReference.child(taskId).setValue(task)
                 .addOnCompleteListener(task1 -> {
                     if (task1.isSuccessful()) {
-                        Toast.makeText(CadenActivity.this, "Task saved successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreateTaskActivity.this, "Task saved successfully", Toast.LENGTH_SHORT).show();
                         finish(); // Close activity
                     } else {
-                        Toast.makeText(CadenActivity.this, "Failed to save task. Try again!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreateTaskActivity.this, "Failed to save task. Try again!", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

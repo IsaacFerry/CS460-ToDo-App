@@ -1,6 +1,5 @@
 package com.example.todotitans;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -8,19 +7,32 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.view.View;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * The {@code SignInActivity} class handles the user sign-in process.
+ * <p>
+ * This activity provides functionality for signing in an existing user,
+ * navigating to the sign-up screen, and recovering forgotten passwords.
+ * If the user is already signed in, they are redirected to the {@code HomeActivity}.
+ * </p>
+ */
 public class SignInActivity extends AppCompatActivity {
     private EditText inputEmail, inputPassword;
     private Button buttonLogin;
     private FirebaseAuth authentication;
     private ProgressBar progressBar;
 
+    /**
+     * Called when the activity is starting. Initializes the layout, checks for an already signed-in user,
+     * and sets up event listeners for sign-in, sign-up, and forgot password actions.
+     *
+     * @param savedInstanceState If the activity is being reinitialized after being previously shut down,
+     *                           this Bundle contains the most recent data supplied; otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +82,14 @@ public class SignInActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Handles the user sign-in process.
+     * <p>
+     * This method validates the user's email and password, then uses Firebase Authentication to
+     * sign in the user. If successful, the user is redirected to the {@code HomeActivity}; otherwise,
+     * an error message is displayed.
+     * </p>
+     */
     private void signInUser() {
         loading(true);
         String email = inputEmail.getText().toString().trim();
@@ -101,9 +121,16 @@ public class SignInActivity extends AppCompatActivity {
                     }
                 });
 
-
     }
 
+    /**
+     * Toggles the loading state of the sign-in process.
+     * <p>
+     * This method hides or shows the login button and progress bar based on the loading state.
+     * </p>
+     *
+     * @param isLoading {@code true} to show the progress bar and hide the button, {@code false} to do the reverse.
+     */
     private void loading(Boolean isLoading) {
         if (isLoading) {
             buttonLogin.setVisibility(View.INVISIBLE);

@@ -2,7 +2,6 @@ package com.example.todotitans;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,20 +9,22 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.todotitans.database.Task;
 import com.google.firebase.database.DatabaseReference;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 
+/**
+ * Adapter for displaying tasks in a {@link RecyclerView}.
+ * <p>
+ * This adapter handles task display, editing, selection, and completion functionalities.
+ * It interacts with Firebase Realtime Database to update task states and supports listeners
+ * for task edit and complete actions.
+ * </p>
+ */
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
     private final DatabaseReference databaseReference;
@@ -33,6 +34,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private OnTaskCompleteListener onTaskCompleteListener;
     private OnTaskEditListener onTaskEditListener;
 
+    /**
+     * Constructs a new {@code TaskAdapter} instance.
+     *
+     * @param context          The context of the activity or fragment where the RecyclerView is displayed.
+     * @param tasks            The list of tasks to display.
+     * @param databaseReference The Firebase database reference for managing tasks.
+     */
     public TaskAdapter(Context context, ArrayList<Task> tasks, DatabaseReference databaseReference) {
         this.context = context;
         this.tasks = tasks;
@@ -40,18 +48,45 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.databaseReference = databaseReference;
     }
 
+    /**
+     * Listener interface for handling task completion events.
+     */
     public interface OnTaskCompleteListener {
+        /**
+         * Called when a task is marked as complete.
+         *
+         * @param task The task that was completed.
+         */
         void onTaskComplete(Task task);
     }
 
+    /**
+     * Listener interface for handling task edit events.
+     */
     public interface OnTaskEditListener {
+        /**
+         * Called when a task is selected for editing.
+         *
+         * @param task The task to edit.
+         */
         void onTaskEdit(Task task);
     }
 
+
+    /**
+     * Sets the listener for task completion events.
+     *
+     * @param listener The listener to set.
+     */
     public void setOnTaskCompleteListener(OnTaskCompleteListener listener) {
         this.onTaskCompleteListener = listener;
     }
 
+    /**
+     * Sets the listener for task edit events.
+     *
+     * @param listener The listener to set.
+     */
     public void setOnTaskEditListener(OnTaskEditListener listener) {
         this.onTaskEditListener = listener;
     }
@@ -149,6 +184,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return tasks.size();
     }
 
+    /**
+     * Returns the list of selected tasks.
+     *
+     * @return A list of selected tasks.
+     */
     public ArrayList<Task> getSelectedTasks() {
         ArrayList<Task> selected = new ArrayList<>();
         for (int index : selectedTasks) {
@@ -157,6 +197,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return selected;
     }
 
+    /**
+     * Removes the specified tasks from the adapter and clears the selection.
+     *
+     * @param tasksToRemove The tasks to remove.
+     */
     public void removeTasks(ArrayList<Task> tasksToRemove) {
         tasks.removeAll(tasksToRemove);
         selectedTasks.clear();
@@ -169,6 +214,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         CheckBox taskCompleteCheckBox;
         ImageView editTaskButton;
 
+        /**
+         * Constructs a new {@code TaskViewHolder}.
+         *
+         * @param itemView The view of the individual task layout.
+         */
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             textTitle = itemView.findViewById(R.id.textTitle);

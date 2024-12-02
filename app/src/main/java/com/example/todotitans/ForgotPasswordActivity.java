@@ -1,14 +1,11 @@
 package com.example.todotitans;
+
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.example.todotitans.databinding.ActivityForgotPasswordBinding;
 import com.example.todotitans.utilities.Constants;
 import com.google.android.material.button.MaterialButton;
@@ -18,8 +15,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
+/**
+ * The {@code ForgotPasswordActivity} class handles the forgot password functionality for users.
+ * <p>
+ * This activity allows users to recover their passwords by providing their registered email
+ * and the answer to their security question. Users can also navigate to the Sign In or Sign Up activities.
+ * </p>
+ */
 public class ForgotPasswordActivity extends Activity {
     private ActivityForgotPasswordBinding binding;
+
+    /**
+     * Called when the activity is starting. Initializes the layout, sets up navigation buttons,
+     * and defines the forgot password functionality.
+     *
+     * @param savedInstanceState If the activity is being reinitialized after being previously shut down,
+     *                           this Bundle contains the most recent data supplied; otherwise, it is null.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +59,14 @@ public class ForgotPasswordActivity extends Activity {
         forgotPasswordButton.setOnClickListener(v -> forgotPassword());
     }
 
+    /**
+     * Handles the forgot password functionality.
+     * <p>
+     * This method validates the user's input, queries the Firebase Realtime Database to find the user
+     * by their email, and compares the entered security question answer with the stored value.
+     * If successful, the user's password is revealed; otherwise, an error message is displayed.
+     * </p>
+     */
     private void forgotPassword() {
         String email = binding.inputEmail.getText().toString().trim();
         String secureQuestion = binding.inputSecurityQuestion.getText().toString().trim();

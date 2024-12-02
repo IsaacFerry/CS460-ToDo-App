@@ -22,7 +22,17 @@ public class Task implements Serializable {
     public Task() {
     }
 
-    // Parameterized constructor
+    /**
+     * Constructs a new {@code Task} object with the specified details.
+     *
+     * @param taskId        The unique identifier for the task.
+     * @param userId        The ID of the user associated with the task.
+     * @param priorityLevel The priority level of the task (e.g., High, Medium, Low).
+     * @param title         The title of the task.
+     * @param description   A detailed description of the task.
+     * @param dueDate       The due date of the task as a string (e.g., "MMMM dd, yyyy HH:mm").
+     * @param status        The current status of the task (e.g., Pending, Completed).
+     */
     public Task(String taskId, String userId, String priorityLevel, String title, String description, String dueDate, String status) {
         this.taskId = taskId;
         this.userId = userId;
@@ -90,15 +100,27 @@ public class Task implements Serializable {
         this.status = status;
     }
 
-    // Method to convert dueDate string to Date object
+    /**
+     * Converts the task's due date string into a {@link Date} object.
+     *
+     * @return The {@link Date} representation of the task's due date, or {@code null}
+     *         if the parsing fails.
+     * @throws NullPointerException if {@code dueDateString} is not initialized or null.
+     */
     public Date getDueDateAsDate() {
-        String dueDateString = this.dueDate; // Replace with the correct field in your Task object
+        // Retrieve the due date as a string (replace with the correct field in your class)
+        String dueDateString = this.dueDate; // Replace "this.dueDate" with your actual field
+
+        // Define the date format that matches the format of the dueDateString
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy HH:mm", Locale.getDefault());
+
         try {
+            // Parse the string into a Date object and return it
             return sdf.parse(dueDateString);
         } catch (Exception e) {
+            // Log the error and return null if parsing fails
             e.printStackTrace();
-            return null; // Return null if parsing fails
+            return null;
         }
     }
 

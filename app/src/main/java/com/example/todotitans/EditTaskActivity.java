@@ -10,14 +10,11 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.todotitans.database.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,6 +23,13 @@ import java.util.Locale;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The {@code EditTaskActivity} class allows users to edit the details of an existing task.
+ * <p>
+ * This activity fetches a {@code Task} object passed from the previous activity, pre-fills the UI
+ * with its data, and allows users to update and save changes to Firebase Realtime Database.
+ * </p>
+ */
 public class EditTaskActivity extends AppCompatActivity {
 
     private EditText editTitle, editDescription;
@@ -36,6 +40,13 @@ public class EditTaskActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
 
+    /**
+     * Called when the activity is starting. This method initializes the UI, sets up the
+     * Firebase reference, pre-fills task details, and defines event listeners for user actions.
+     *
+     * @param savedInstanceState If the activity is being reinitialized after being previously shut down,
+     *                           this Bundle contains the most recent data supplied; otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +88,13 @@ public class EditTaskActivity extends AppCompatActivity {
         saveTaskButton.setOnClickListener(v -> saveUpdatedTask());
     }
 
+    /**
+     * Opens a dialog for the user to select a date and time.
+     * <p>
+     * This method displays a {@link DatePickerDialog} and a {@link TimePickerDialog}.
+     * The selected values are displayed in the appropriate fields.
+     * </p>
+     */
     private void openDateTimeDialog() {
         Calendar calendar = Calendar.getInstance();
         int currentYear = calendar.get(Calendar.YEAR);
@@ -101,6 +119,13 @@ public class EditTaskActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    /**
+     * Saves the updated task details to Firebase Realtime Database.
+     * <p>
+     * This method validates user input, combines the date and time into a formatted string,
+     * and updates the task entry in Firebase. Displays appropriate messages based on success or failure.
+     * </p>
+     */
     private void saveUpdatedTask() {
         String updatedTitle = editTitle.getText().toString().trim();
         String updatedDescription = editDescription.getText().toString().trim();
@@ -135,6 +160,15 @@ public class EditTaskActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Pre-fills the date and time fields based on the task's due date.
+     * <p>
+     * This method parses the provided due date string into separate date and time components
+     * and displays them in the appropriate UI fields.
+     * </p>
+     *
+     * @param dueDate The task's due date in the format "MMMM dd, yyyy HH:mm".
+     */
     private void prefillDateTime(String dueDate) {
         try {
             SimpleDateFormat inputFormat = new SimpleDateFormat("MMMM dd, yyyy HH:mm", Locale.getDefault());
