@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,7 +18,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +39,7 @@ public class EditTaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.edit_task);  // Inflate the correct edit_task layout
+        setContentView(R.layout.edit_task);
 
         // Get the task passed from the previous activity
         taskToEdit = (Task) getIntent().getSerializableExtra("task");
@@ -63,8 +66,7 @@ public class EditTaskActivity extends AppCompatActivity {
         // Pre-fill data
         editTitle.setText(taskToEdit.getTitle());
         editDescription.setText(taskToEdit.getDescription());
-        textDate.setText(taskToEdit.getDueDate().split(" ")[0]); // Assuming format: YYYY-MM-DD
-        textTime.setText(taskToEdit.getDueDate().split(" ")[1]); // Assuming format: HH:MM
+        prefillDateTime(taskToEdit.getDueDate());
         int priorityIndex = priorityAdapter.getPosition(taskToEdit.getPriorityLevel());
         prioritySpinner.setSelection(priorityIndex);
 
@@ -76,7 +78,6 @@ public class EditTaskActivity extends AppCompatActivity {
     }
 
     private void openDateTimeDialog() {
-        // Get the current date
         Calendar calendar = Calendar.getInstance();
         int currentYear = calendar.get(Calendar.YEAR);
         int currentMonth = calendar.get(Calendar.MONTH);
@@ -86,7 +87,8 @@ public class EditTaskActivity extends AppCompatActivity {
 
         // DatePicker Dialog
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, (datePicker, year, month, dayOfMonth) -> {
-            textDate.setText(String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth));
+            textDate.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
+                    .format(new Date(year - 1900, month, dayOfMonth)));
         }, currentYear, currentMonth, currentDay);
 
         // TimePicker Dialog
@@ -100,43 +102,53 @@ public class EditTaskActivity extends AppCompatActivity {
     }
 
     private void saveUpdatedTask() {
-        // Get the updated values
         String updatedTitle = editTitle.getText().toString().trim();
         String updatedDescription = editDescription.getText().toString().trim();
         String updatedDate = textDate.getText().toString().trim();
         String updatedTime = textTime.getText().toString().trim();
         String updatedPriority = prioritySpinner.getSelectedItem().toString();
 
-        // Validate fields
         if (TextUtils.isEmpty(updatedTitle)) {
             editTitle.setError("Task title is required!");
             return;
         }
 
-        // Prepare the updated task data
-        String taskId = taskToEdit.getTaskId();
-        String userId = firebaseAuth.getCurrentUser().getUid();
-        String status = "Pending"; // Default status if not provided
-        String dueDate = updatedDate + " " + updatedTime;
+        // Combine and format the date and time
+        String formattedDueDate = updatedDate + " " + updatedTime;
 
         Map<String, Object> updatedTask = new HashMap<>();
-        updatedTask.put("taskId", taskId);
-        updatedTask.put("userId", userId);
+        updatedTask.put("taskId", taskToEdit.getTaskId());
+        updatedTask.put("userId", firebaseAuth.getCurrentUser().getUid());
         updatedTask.put("priorityLevel", updatedPriority);
         updatedTask.put("title", updatedTitle);
         updatedTask.put("description", updatedDescription);
-        updatedTask.put("status", status);
-        updatedTask.put("dueDate", dueDate);
+        updatedTask.put("dueDate", formattedDueDate);
 
-        // Save the updated task in Firebase
-        databaseReference.child(taskId).setValue(updatedTask)
-                .addOnCompleteListener(task1 -> {
-                    if (task1.isSuccessful()) {
-                        Toast.makeText(EditTaskActivity.this, "Task updated successfully", Toast.LENGTH_SHORT).show();
-                        finish(); // Close the activity
+        databaseReference.child(taskToEdit.getTaskId()).setValue(updatedTask)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this, "Task updated successfully", Toast.LENGTH_SHORT).show();
+                        finish();
                     } else {
-                        Toast.makeText(EditTaskActivity.this, "Failed to update task. Try again.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Failed to update task. Try again.", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void prefillDateTime(String dueDate) {
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("MMMM dd, yyyy HH:mm", Locale.getDefault());
+            Date date = inputFormat.parse(dueDate);
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+
+            textDate.setText(dateFormat.format(date));
+            textTime.setText(timeFormat.format(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            textDate.setText("");
+            textTime.setText("");
+        }
     }
 }

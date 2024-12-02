@@ -234,9 +234,22 @@ public class HomeActivity extends AppCompatActivity {
                             Task task = taskSnapshot.getValue(Task.class);
                             if (task != null) {
                                 taskList.add(task);
-                                scheduleNotification(task); // Schedule notifications if necessary
                             }
                         }
+
+                        // Sort the taskList by dueDate
+                        taskList.sort((task1, task2) -> {
+                            try {
+                                SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy HH:mm", Locale.getDefault());
+                                Date date1 = sdf.parse(task1.getDueDate());
+                                Date date2 = sdf.parse(task2.getDueDate());
+                                return date1.compareTo(date2);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                return 0; // Keep the order unchanged if parsing fails
+                            }
+                        });
+
                         taskAdapter.notifyDataSetChanged(); // Refresh RecyclerView
                     }
 
