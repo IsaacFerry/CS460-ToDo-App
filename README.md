@@ -32,20 +32,20 @@ To run ToDoTitans on your local machine:
 2. **Open in Android Studio:**
 - Launch Android Studio
 - Select 'Open an Existing Project'
-- Naviaget to the cloned reposityr folder and select it
+- Naviaget to the cloned repository folder and select it
 
 3. **Build the Project**
 - Allow Android Studio to build the project and resolve any dependencies
 
 4. **Run the App**
 - Choose an emulator or physical device
-- Click on the 'Run' button to isntal and launch the app
+- Click on the 'Run' button to install and launch the app
 
 ## Usage
 
 1. **Adding a Task:**
 - Tap on the 'Add Task' button
-- Fill in the task details: title, description, due tae, and priority level
+- Fill in the task details: title, description, due date, and priority level
 - Save the task
 
 2. **Receiving Notifications:**
