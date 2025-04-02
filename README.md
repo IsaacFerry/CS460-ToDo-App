@@ -48,6 +48,12 @@ To run ToDoTitans on your local machine:
 - Fill in the task details: title, description, due date, and priority level
 - Save the task
 
+
+
+
+
+
+
 2. **Receiving Notifications:**
 - Based on the priority level set for the task, you will receive notifications as follows:
     - Low Priority: 15 minutes before the due time
@@ -57,3 +63,5 @@ To run ToDoTitans on your local machine:
 3. **Managing Tasks:**
 - View all tasks in the main list
 - Tap on a task to edit or delete it
+
+![image](https://github.com/user-attachments/assets/a6bd550a-b186-42ab-8700-c8daeb5891ca)
