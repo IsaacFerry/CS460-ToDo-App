@@ -3,7 +3,7 @@
 
 # ToDoTitans
 
-ToDoTitans is a task management Android application that allows users to create tasks and receive notifications based on their priority levels. The app ensures timely reminders to help users stay organized and manage their tasks effectively
+ToDoTitans is an Android task management application that allows users to create tasks and receive notifications based on their priority levels. The app ensures timely reminders to help users stay organized and manage their tasks effectively
 
 ## Features
 
@@ -32,7 +32,7 @@ To run ToDoTitans on your local machine:
 2. **Open in Android Studio:**
 - Launch Android Studio
 - Select 'Open an Existing Project'
-- Naviaget to the cloned repository folder and select it
+- Navigate to the cloned repository folder and select it
 
 3. **Build the Project**
 - Allow Android Studio to build the project and resolve any dependencies
@@ -47,11 +47,6 @@ To run ToDoTitans on your local machine:
 - Tap on the 'Add Task' button
 - Fill in the task details: title, description, due date, and priority level
 - Save the task
-
-
-
-
-
 
 
 2. **Receiving Notifications:**
