@@ -20,6 +20,7 @@ ToDoTitans is an Android task management application that allows users to create
 - **Programming Language:** Java
 - **Development Environment:** Android Studio
 - **Notifications:** Android's AlarmManager and NotificationManager for scheduling and displaying notifications
+- **Data Base:** Firebase
 
 ## Getting Started
 
